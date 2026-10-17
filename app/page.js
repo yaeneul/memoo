@@ -171,6 +171,7 @@ export default function Home() {
           <div style={styles.authHeader}>
             <span style={{ fontSize: '36px' }}>📌</span>
             <h1 style={styles.authTitle}>포스트잇 메모장</h1>
+            <p style={styles.authSubtitle}>소중한 기억들을 귀엽게 남겨보세요!</p>
           </div>
 
           <form onSubmit={handleAuthSubmit} style={styles.form}>
@@ -228,14 +229,14 @@ export default function Home() {
                   아직 작성된 포스트잇이 없어요!
                 </p>
                 <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#aaa' }}>
-                  왼쪽 하단의 ➕ 버튼을 눌러 첫 번째 메모를 남겨보세요.
+                  오른쪽 하단의 ➕ 버튼을 눌러 첫 번째 메모를 남겨보세요.
                 </p>
               </div>
             ) : (
               memos.map((memo, index) => {
                 const { title, content } = parseMemoText(memo.text);
                 const color = postitColors[index % postitColors.length];
-                const rotateDeg = (index % 3 - 1) * 2; // -2deg, 0deg, 2deg 회전으로 살짝 기운 느낌
+                const rotateDeg = (index % 3 - 1) * 2; // -2deg, 0deg, 2deg 회전 효과
 
                 return (
                   <div
@@ -267,7 +268,7 @@ export default function Home() {
             )}
           </div>
 
-          {/* 왼쪽 하단 Floating 버튼 */}
+          {/* 오른쪽 하단 대형 Floating 버튼 */}
           <button
             onClick={() => setIsModalOpen(true)}
             style={styles.floatingBtn}
@@ -337,7 +338,6 @@ export default function Home() {
   );
 }
 
-// 귀엽고 부드러운 파스텔 스타일 정의
 const styles = {
   container: {
     minHeight: '100vh',
@@ -444,7 +444,7 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
     gap: '24px',
-    paddingBottom: '80px',
+    paddingBottom: '100px',
   },
   postit: {
     position: 'relative',
@@ -491,20 +491,20 @@ const styles = {
     border: '2px dashed #DDD8CC',
   },
 
-  // Floating 버튼 & 모달
+  // 오른쪽 하단 대형 Floating 버튼
   floatingBtn: {
     position: 'fixed',
-    bottom: '28px',
-    left: '28px',
-    padding: '14px 22px',
+    bottom: '32px',
+    right: '32px',
+    padding: '16px 28px',
     backgroundColor: '#4FC3F7',
     color: '#FFF',
     border: 'none',
-    borderRadius: '30px',
-    fontSize: '15px',
+    borderRadius: '40px',
+    fontSize: '17px',
     fontWeight: 'bold',
     cursor: 'pointer',
-    boxShadow: '0 6px 16px rgba(79, 195, 247, 0.4)',
+    boxShadow: '0 8px 20px rgba(79, 195, 247, 0.45)',
     zIndex: 100,
   },
   modalOverlay: {

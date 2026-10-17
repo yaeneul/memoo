@@ -18,8 +18,8 @@ export default function Home() {
   
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedMemo, setSelectedMemo] = useState(null); // 클릭한 포스트잇 저장
-  const [isEditing, setIsEditing] = useState(false);     // 수정 모드 여부
+  const [selectedMemo, setSelectedMemo] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
 
@@ -273,7 +273,6 @@ export default function Home() {
           <div style={styles.gridContainer}>
             {memos.length === 0 ? (
               <div style={styles.emptyBox}>
-                <span style={{ fontSize: '48px', marginBottom: '12px' }}>🐣</span>
                 <p style={{ margin: 0, fontSize: '18px', color: '#777', fontWeight: 'bold' }}>
                   아직 작성된 포스트잇이 없어요!
                 </p>
@@ -391,7 +390,6 @@ export default function Home() {
                 </div>
 
                 {isEditing ? (
-                  /* 수정 모드 폼 */
                   <form onSubmit={handleUpdateMemo} style={styles.form}>
                     <div>
                       <label style={styles.label}>제목</label>
@@ -425,7 +423,6 @@ export default function Home() {
                     </div>
                   </form>
                 ) : (
-                  /* 보기 모드 (선택 메뉴) */
                   <div>
                     {parseMemoText(selectedMemo.text).title && (
                       <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#222' }}>
@@ -601,7 +598,7 @@ const styles = {
   emptyBox: {
     gridColumn: '1 / -1',
     textAlign: 'center',
-    padding: '80px 20px',
+    padding: '60px 20px',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
     borderRadius: '20px',
     border: '2px dashed #DDD8CC',

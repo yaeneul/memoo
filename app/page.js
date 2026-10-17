@@ -15,7 +15,13 @@ export default function Home() {
   const [titleInput, setTitleInput] = useState('');
   const [contentInput, setContentInput] = useState('');
   const [memos, setMemos] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Modals
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedMemo, setSelectedMemo] = useState(null); // 클릭한 포스트잇 저장
+  const [isEditing, setIsEditing] = useState(false);     // 수정 모드 여부
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
 
   // 포스트잇 파스텔 컬러 배열
   const postitColors = [
@@ -101,7 +107,6 @@ export default function Home() {
       return;
     }
 
-    // 제목과 내용을 조합하여 기존 text 필드에 저장
     const fullText = titleInput.trim()
       ? `[제목: ${titleInput.trim()}]\n${contentInput}`
       : contentInput;
@@ -119,11 +124,45 @@ export default function Home() {
       if (res.ok) {
         setTitleInput('');
         setContentInput('');
-        setIsModalOpen(false);
+        setIsAddModalOpen(false);
         fetchMemos(token);
       }
     } catch (err) {
       alert('메모 저장 실패');
+    }
+  };
+
+  // 메모 수정
+  const handleUpdateMemo = async (e) => {
+    e.preventDefault();
+    if (!editContent.trim()) {
+      alert('메모 내용을 입력해 주세요!');
+      return;
+    }
+
+    const fullText = editTitle.trim()
+      ? `[제목: ${editTitle.trim()}]\n${editContent}`
+      : editContent;
+
+    try {
+      const res = await fetch(`/api/memos/${selectedMemo.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: fullText }),
+      });
+
+      if (res.ok) {
+        setSelectedMemo(null);
+        setIsEditing(false);
+        fetchMemos(token);
+      } else {
+        alert('메모 수정 권한이 없거나 실패했습니다.');
+      }
+    } catch (err) {
+      alert('메모 수정 실패');
     }
   };
 
@@ -138,6 +177,7 @@ export default function Home() {
       });
 
       if (res.ok) {
+        setSelectedMemo(null);
         fetchMemos(token);
       }
     } catch (err) {
@@ -145,15 +185,24 @@ export default function Home() {
     }
   };
 
+  // 포스트잇 클릭 시 모달 열기
+  const handleCardClick = (memo) => {
+    const { title, content } = parseMemoText(memo.text);
+    setSelectedMemo(memo);
+    setEditTitle(title || '');
+    setEditContent(content);
+    setIsEditing(false);
+  };
+
   // 메모 텍스트에서 제목과 내용 분리하는 헬퍼 함수
   const parseMemoText = (text) => {
-    if (text.startsWith('[제목: ') && text.includes(']\n')) {
+    if (text && text.startsWith('[제목: ') && text.includes(']\n')) {
       const titleEndIndex = text.indexOf(']\n');
       const title = text.substring(6, titleEndIndex);
       const content = text.substring(titleEndIndex + 2);
       return { title, content };
     }
-    return { title: null, content: text };
+    return { title: null, content: text || '' };
   };
 
   // 날짜 포맷 함수
@@ -236,11 +285,12 @@ export default function Home() {
               memos.map((memo, index) => {
                 const { title, content } = parseMemoText(memo.text);
                 const color = postitColors[index % postitColors.length];
-                const rotateDeg = (index % 3 - 1) * 2; // -2deg, 0deg, 2deg 회전 효과
+                const rotateDeg = (index % 3 - 1) * 2;
 
                 return (
                   <div
                     key={memo.id}
+                    onClick={() => handleCardClick(memo)}
                     style={{
                       ...styles.postit,
                       backgroundColor: color,
@@ -248,17 +298,8 @@ export default function Home() {
                     }}
                   >
                     <div style={styles.postitTape}></div>
-                    <button
-                      onClick={() => handleDeleteMemo(memo.id)}
-                      style={styles.deleteBtn}
-                      title="삭제하기"
-                    >
-                      ✕
-                    </button>
-
                     {title && <h3 style={styles.postitTitle}>{title}</h3>}
                     <p style={styles.postitContent}>{content}</p>
-
                     <div style={styles.postitDate}>
                       {formatDate(memo.created_at || memo.createdAt)}
                     </div>
@@ -270,23 +311,23 @@ export default function Home() {
 
           {/* 오른쪽 하단 대형 Floating 버튼 */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsAddModalOpen(true)}
             style={styles.floatingBtn}
             title="새 메모 작성하기"
           >
             ✏️ 새 메모 추가
           </button>
 
-          {/* 새 메모 작성 모달 (팝업) */}
-          {isModalOpen && (
-            <div style={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+          {/* 새 메모 작성 모달 */}
+          {isAddModalOpen && (
+            <div style={styles.modalOverlay} onClick={() => setIsAddModalOpen(false)}>
               <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                 <div style={styles.modalHeader}>
                   <h2 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
                     💛 새 포스트잇 쓰기
                   </h2>
                   <button
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={() => setIsAddModalOpen(false)}
                     style={styles.modalCloseBtn}
                   >
                     ✕
@@ -319,7 +360,7 @@ export default function Home() {
                   <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                     <button
                       type="button"
-                      onClick={() => setIsModalOpen(false)}
+                      onClick={() => setIsAddModalOpen(false)}
                       style={styles.cancelBtn}
                     >
                       취소
@@ -329,6 +370,91 @@ export default function Home() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* 클릭 시 작동하는 수정/삭제 상세 모달 */}
+          {selectedMemo && (
+            <div style={styles.modalOverlay} onClick={() => setSelectedMemo(null)}>
+              <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <div style={styles.modalHeader}>
+                  <h2 style={{ margin: 0, fontSize: '18px', color: '#333' }}>
+                    {isEditing ? '✏️ 포스트잇 수정하기' : '📌 포스트잇 상세'}
+                  </h2>
+                  <button
+                    onClick={() => setSelectedMemo(null)}
+                    style={styles.modalCloseBtn}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {isEditing ? (
+                  /* 수정 모드 폼 */
+                  <form onSubmit={handleUpdateMemo} style={styles.form}>
+                    <div>
+                      <label style={styles.label}>제목</label>
+                      <input
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        style={styles.input}
+                      />
+                    </div>
+                    <div>
+                      <label style={styles.label}>내용</label>
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        required
+                        style={styles.textarea}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditing(false)}
+                        style={styles.cancelBtn}
+                      >
+                        취소
+                      </button>
+                      <button type="submit" style={styles.primaryBtn}>
+                        저장하기 💾
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  /* 보기 모드 (선택 메뉴) */
+                  <div>
+                    {parseMemoText(selectedMemo.text).title && (
+                      <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#222' }}>
+                        {parseMemoText(selectedMemo.text).title}
+                      </h3>
+                    )}
+                    <p style={{ fontSize: '15px', color: '#444', whiteSpace: 'pre-wrap', minHeight: '80px', margin: '0 0 16px 0' }}>
+                      {parseMemoText(selectedMemo.text).content}
+                    </p>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '20px', textAlign: 'right' }}>
+                      작성일: {formatDate(selectedMemo.created_at || selectedMemo.createdAt)}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        style={{ ...styles.primaryBtn, backgroundColor: '#4FC3F7', boxShadow: 'none' }}
+                      >
+                        ✏️ 수정하기
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMemo(selectedMemo.id)}
+                        style={{ ...styles.cancelBtn, backgroundColor: '#FF7043', color: '#FFF' }}
+                      >
+                        🗑️ 삭제하기
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -455,7 +581,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    transition: 'transform 0.2s ease',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    cursor: 'pointer',
   },
   postitTape: {
     position: 'absolute',
@@ -466,17 +593,6 @@ const styles = {
     height: '20px',
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-  },
-  deleteBtn: {
-    position: 'absolute',
-    top: '8px',
-    right: '8px',
-    background: 'none',
-    border: 'none',
-    color: 'rgba(0, 0, 0, 0.3)',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
   },
   postitTitle: { margin: '8px 0 6px 0', fontSize: '16px', fontWeight: 'bold', color: '#222' },
   postitContent: { margin: 0, fontSize: '14px', color: '#444', whiteSpace: 'pre-wrap', wordBreak: 'break-all', flexGrow: 1 },
@@ -491,7 +607,7 @@ const styles = {
     border: '2px dashed #DDD8CC',
   },
 
-  // 오른쪽 하단 대형 Floating 버튼
+  // 오른쪽 하단 Floating 버튼
   floatingBtn: {
     position: 'fixed',
     bottom: '32px',

@@ -194,11 +194,11 @@ export default function Home() {
     setIsEditing(false);
   };
 
-  // 메모 텍스트에서 제목과 내용 분리하는 헬퍼 함수
+  // 메모 텍스트에서 제목과 내용 분리하는 헬퍼 함수 (앞글자 잘림 수정 완료)
   const parseMemoText = (text) => {
     if (text && text.startsWith('[제목: ') && text.includes(']\n')) {
       const titleEndIndex = text.indexOf(']\n');
-      const title = text.substring(6, titleEndIndex);
+      const title = text.substring(5, titleEndIndex); // [제목: 의 길이인 5로 수정
       const content = text.substring(titleEndIndex + 2);
       return { title, content };
     }

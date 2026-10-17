@@ -7,10 +7,25 @@ export default function Home() {
   const [userEmail, setUserEmail] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
 
+  // Auth States
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [memoInput, setMemoInput] = useState('');
+
+  // Memo States
+  const [titleInput, setTitleInput] = useState('');
+  const [contentInput, setContentInput] = useState('');
   const [memos, setMemos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 포스트잇 파스텔 컬러 배열
+  const postitColors = [
+    '#FFF59D', // 파스텔 노랑
+    '#FFCDD2', // 파스텔 핑크
+    '#B3E5FC', // 파스텔 하늘
+    '#C8E6C9', // 파스텔 연두
+    '#E1BEE7', // 파스텔 보라
+    '#FFE0B2', // 파스텔 주황
+  ];
 
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
@@ -22,7 +37,7 @@ export default function Home() {
     }
   }, []);
 
-  // 회원가입 & 로그인 (/api/auth/signup 또는 /api/auth/login 호출)
+  // 로그인 및 회원가입
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
@@ -36,12 +51,12 @@ export default function Home() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        alert(data.message || '오류가 발생했습니다.');
         return;
       }
 
       if (isSignUp) {
-        alert('회원가입이 완료되었습니다! 로그인해 주세요.');
+        alert('🎉 회원가입 성공! 로그인해 주세요.');
         setIsSignUp(false);
         setPasswordInput('');
       } else {
@@ -52,7 +67,7 @@ export default function Home() {
         fetchMemos(data.token);
       }
     } catch (err) {
-      alert('오류가 발생했습니다.');
+      alert('연결 중 오류가 발생했습니다.');
     }
   };
 
@@ -63,7 +78,7 @@ export default function Home() {
     setMemos([]);
   };
 
-  // 메모 목록 조회 (/api/memos)
+  // 메모 불러오기
   const fetchMemos = async (authToken) => {
     try {
       const res = await fetch('/api/memos', {
@@ -78,10 +93,18 @@ export default function Home() {
     }
   };
 
-  // 메모 작성 (/api/memos)
+  // 메모 작성
   const handleAddMemo = async (e) => {
     e.preventDefault();
-    if (!memoInput.trim()) return;
+    if (!contentInput.trim()) {
+      alert('메모 내용을 입력해 주세요!');
+      return;
+    }
+
+    // 제목과 내용을 조합하여 기존 text 필드에 저장
+    const fullText = titleInput.trim()
+      ? `[제목: ${titleInput.trim()}]\n${contentInput}`
+      : contentInput;
 
     try {
       const res = await fetch('/api/memos', {
@@ -90,11 +113,13 @@ export default function Home() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ text: memoInput }),
+        body: JSON.stringify({ text: fullText }),
       });
 
       if (res.ok) {
-        setMemoInput('');
+        setTitleInput('');
+        setContentInput('');
+        setIsModalOpen(false);
         fetchMemos(token);
       }
     } catch (err) {
@@ -102,9 +127,9 @@ export default function Home() {
     }
   };
 
-  // 메모 삭제 (/api/memos/[id])
+  // 메모 삭제
   const handleDeleteMemo = async (id) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    if (!confirm('정말 이 포스트잇을 떼어낼까요? 🗑️')) return;
 
     try {
       const res = await fetch(`/api/memos/${id}`, {
@@ -120,98 +145,386 @@ export default function Home() {
     }
   };
 
+  // 메모 텍스트에서 제목과 내용 분리하는 헬퍼 함수
+  const parseMemoText = (text) => {
+    if (text.startsWith('[제목: ') && text.includes(']\n')) {
+      const titleEndIndex = text.indexOf(']\n');
+      const title = text.substring(6, titleEndIndex);
+      const content = text.substring(titleEndIndex + 2);
+      return { title, content };
+    }
+    return { title: null, content: text };
+  };
+
+  // 날짜 포맷 함수
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  };
+
   return (
     <main style={styles.container}>
-      <div style={styles.card}>
-        {!token ? (
-          <div>
-            <h2 style={styles.title}>{isSignUp ? '회원가입' : '로그인'}</h2>
-            <form onSubmit={handleAuthSubmit} style={styles.form}>
-              <input
-                type="email"
-                placeholder="이메일"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                required
-                style={styles.input}
-              />
-              <input
-                type="password"
-                placeholder="비밀번호"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                required
-                style={styles.input}
-              />
-              <button type="submit" style={styles.primaryBtn}>
-                {isSignUp ? '회원가입' : '로그인'}
-              </button>
-            </form>
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              style={{ ...styles.secondaryBtn, width: '100%', marginTop: '10px' }}
-            >
-              {isSignUp ? '로그인으로 전환' : '회원가입으로 전환'}
-            </button>
+      {!token ? (
+        /* 로그인 / 회원가입 화면 */
+        <div style={styles.authCard}>
+          <div style={styles.authHeader}>
+            <span style={{ fontSize: '36px' }}>📌</span>
+            <h1 style={styles.authTitle}>포스트잇 메모장</h1>
+            <p style={styles.authSubtitle}>소중한 기억들을 귀엽게 남겨보세요!</p>
           </div>
-        ) : (
-          <div>
-            <div style={styles.userInfo}>
-              <span style={{ fontWeight: 'bold', color: '#555' }}>{userEmail}</span>
-              <button onClick={handleLogout} style={styles.secondaryBtn}>
+
+          <form onSubmit={handleAuthSubmit} style={styles.form}>
+            <input
+              type="email"
+              placeholder="이메일 주소"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              required
+              style={styles.input}
+            />
+            <input
+              type="password"
+              placeholder="비밀번호"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              required
+              style={styles.input}
+            />
+            <button type="submit" style={styles.primaryBtn}>
+              {isSignUp ? '✨ 회원가입하기' : '🚀 로그인하기'}
+            </button>
+          </form>
+
+          <button
+            onClick={() => setIsSignUp(!isSignUp)}
+            style={styles.toggleBtn}
+          >
+            {isSignUp ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입'}
+          </button>
+        </div>
+      ) : (
+        /* 메모 메인 화면 */
+        <div style={styles.mainWrapper}>
+          {/* 상단 네비게이션 바 */}
+          <header style={styles.header}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '28px' }}>📝</span>
+              <h1 style={styles.headerTitle}>내 포스트잇 보드</h1>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={styles.userBadge}>👤 {userEmail}</span>
+              <button onClick={handleLogout} style={styles.logoutBtn}>
                 로그아웃
               </button>
             </div>
+          </header>
 
-            <h2 style={styles.title}>내 메모 목록</h2>
-            <form onSubmit={handleAddMemo} style={styles.form}>
-              <textarea
-                placeholder="새로운 메모를 입력하세요..."
-                value={memoInput}
-                onChange={(e) => setMemoInput(e.target.value)}
-                required
-                style={styles.textarea}
-              />
-              <button type="submit" style={styles.primaryBtn}>
-                메모 저장
-              </button>
-            </form>
+          {/* 포스트잇 메모 그리드 영역 */}
+          <div style={styles.gridContainer}>
+            {memos.length === 0 ? (
+              <div style={styles.emptyBox}>
+                <span style={{ fontSize: '48px', marginBottom: '12px' }}>🐣</span>
+                <p style={{ margin: 0, fontSize: '18px', color: '#777', fontWeight: 'bold' }}>
+                  아직 작성된 포스트잇이 없어요!
+                </p>
+                <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#aaa' }}>
+                  왼쪽 하단의 ➕ 버튼을 눌러 첫 번째 메모를 남겨보세요.
+                </p>
+              </div>
+            ) : (
+              memos.map((memo, index) => {
+                const { title, content } = parseMemoText(memo.text);
+                const color = postitColors[index % postitColors.length];
+                const rotateDeg = (index % 3 - 1) * 2; // -2deg, 0deg, 2deg 회전으로 살짝 기운 느낌
 
-            <div style={{ marginTop: '20px' }}>
-              {memos.length === 0 ? (
-                <p style={{ textAlign: 'center', color: '#888' }}>작성된 메모가 없습니다.</p>
-              ) : (
-                memos.map((memo) => (
-                  <div key={memo.id} style={styles.memoItem}>
-                    <p style={styles.memoText}>{memo.text}</p>
+                return (
+                  <div
+                    key={memo.id}
+                    style={{
+                      ...styles.postit,
+                      backgroundColor: color,
+                      transform: `rotate(${rotateDeg}deg)`,
+                    }}
+                  >
+                    <div style={styles.postitTape}></div>
                     <button
                       onClick={() => handleDeleteMemo(memo.id)}
-                      style={styles.dangerBtn}
+                      style={styles.deleteBtn}
+                      title="삭제하기"
                     >
-                      삭제
+                      ✕
+                    </button>
+
+                    {title && <h3 style={styles.postitTitle}>{title}</h3>}
+                    <p style={styles.postitContent}>{content}</p>
+
+                    <div style={styles.postitDate}>
+                      {formatDate(memo.created_at || memo.createdAt)}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* 왼쪽 하단 Floating 버튼 */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            style={styles.floatingBtn}
+            title="새 메모 작성하기"
+          >
+            ✏️ 새 메모 추가
+          </button>
+
+          {/* 새 메모 작성 모달 (팝업) */}
+          {isModalOpen && (
+            <div style={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+              <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <div style={styles.modalHeader}>
+                  <h2 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
+                    💛 새 포스트잇 쓰기
+                  </h2>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    style={styles.modalCloseBtn}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleAddMemo} style={styles.form}>
+                  <div>
+                    <label style={styles.label}>제목 (선택사항)</label>
+                    <input
+                      type="text"
+                      placeholder="제목을 입력하세요..."
+                      value={titleInput}
+                      onChange={(e) => setTitleInput(e.target.value)}
+                      style={styles.input}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={styles.label}>내용 (필수)</label>
+                    <textarea
+                      placeholder="기억할 내용을 자유롭게 작성하세요..."
+                      value={contentInput}
+                      onChange={(e) => setContentInput(e.target.value)}
+                      required
+                      style={styles.textarea}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(false)}
+                      style={styles.cancelBtn}
+                    >
+                      취소
+                    </button>
+                    <button type="submit" style={styles.primaryBtn}>
+                      붙이기 📌
                     </button>
                   </div>
-                ))
-              )}
+                </form>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </main>
   );
 }
 
+// 귀엽고 부드러운 파스텔 스타일 정의
 const styles = {
-  container: { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' },
-  card: { width: '100%', maxWidth: '450px', backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' },
-  title: { marginBottom: '20px', textAlign: 'center', color: '#333' },
-  form: { display: 'flex', flexDirection: 'column', gap: '10px' },
-  input: { padding: '12px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '14px' },
-  textarea: { padding: '12px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '14px', minHeight: '80px', resize: 'vertical' },
-  primaryBtn: { padding: '12px', backgroundColor: '#4A90E2', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' },
-  secondaryBtn: { padding: '6px 12px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' },
-  dangerBtn: { padding: '6px 12px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' },
-  userInfo: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid #eee' },
-  memoItem: { backgroundColor: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: '8px', padding: '14px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
-  memoText: { margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all', marginRight: '12px', color: '#444' },
+  container: {
+    minHeight: '100vh',
+    backgroundColor: '#F7F5F0',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  authCard: {
+    width: '100%',
+    maxWidth: '380px',
+    backgroundColor: '#FFFFFF',
+    padding: '36px 28px',
+    borderRadius: '24px',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.05)',
+    textAlign: 'center',
+  },
+  authHeader: { marginBottom: '24px' },
+  authTitle: { margin: '8px 0 4px 0', fontSize: '24px', color: '#333', fontWeight: '800' },
+  authSubtitle: { margin: 0, fontSize: '13px', color: '#888' },
+  form: { display: 'flex', flexDirection: 'column', gap: '14px' },
+  input: {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '12px',
+    border: '1.5px solid #EAEAEA',
+    fontSize: '14px',
+    outline: 'none',
+    boxSizing: 'border-box',
+    backgroundColor: '#FAFAFA',
+  },
+  textarea: {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: '12px',
+    border: '1.5px solid #EAEAEA',
+    fontSize: '14px',
+    minHeight: '120px',
+    resize: 'vertical',
+    outline: 'none',
+    boxSizing: 'border-box',
+    backgroundColor: '#FAFAFA',
+  },
+  label: { display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#666', marginBottom: '6px', textAlign: 'left' },
+  primaryBtn: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#FFB74D',
+    color: '#FFF',
+    border: 'none',
+    borderRadius: '12px',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    cursor: 'pointer',
+    boxShadow: '0 4px 10px rgba(255, 183, 77, 0.3)',
+  },
+  cancelBtn: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#E0E0E0',
+    color: '#555',
+    border: 'none',
+    borderRadius: '12px',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    cursor: 'pointer',
+  },
+  toggleBtn: {
+    marginTop: '16px',
+    background: 'none',
+    border: 'none',
+    color: '#FF9800',
+    fontSize: '13px',
+    fontWeight: '600',
+    cursor: 'pointer',
+  },
+
+  // 메인 보드 스타일
+  mainWrapper: { width: '100%', minHeight: '100vh', padding: '24px 32px', boxSizing: 'border-box' },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: '20px',
+    borderBottom: '2px dashed #E0DCD3',
+    marginBottom: '28px',
+  },
+  headerTitle: { margin: 0, fontSize: '22px', fontWeight: '800', color: '#444' },
+  userBadge: { fontSize: '13px', backgroundColor: '#FFF', padding: '8px 14px', borderRadius: '20px', color: '#666', border: '1px solid #E8E4D9' },
+  logoutBtn: {
+    padding: '8px 14px',
+    backgroundColor: '#FF7043',
+    color: '#FFF',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
+
+  // 그리드 & 포스트잇
+  gridContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: '24px',
+    paddingBottom: '80px',
+  },
+  postit: {
+    position: 'relative',
+    padding: '20px',
+    minHeight: '200px',
+    borderRadius: '4px 4px 16px 4px',
+    boxShadow: '3px 6px 12px rgba(0, 0, 0, 0.08)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    transition: 'transform 0.2s ease',
+  },
+  postitTape: {
+    position: 'absolute',
+    top: '-10px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '60px',
+    height: '20px',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: '8px',
+    right: '8px',
+    background: 'none',
+    border: 'none',
+    color: 'rgba(0, 0, 0, 0.3)',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
+  postitTitle: { margin: '8px 0 6px 0', fontSize: '16px', fontWeight: 'bold', color: '#222' },
+  postitContent: { margin: 0, fontSize: '14px', color: '#444', whiteSpace: 'pre-wrap', wordBreak: 'break-all', flexGrow: 1 },
+  postitDate: { marginTop: '12px', fontSize: '11px', color: 'rgba(0, 0, 0, 0.4)', textAlign: 'right' },
+
+  emptyBox: {
+    gridColumn: '1 / -1',
+    textAlign: 'center',
+    padding: '80px 20px',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: '20px',
+    border: '2px dashed #DDD8CC',
+  },
+
+  // Floating 버튼 & 모달
+  floatingBtn: {
+    position: 'fixed',
+    bottom: '28px',
+    left: '28px',
+    padding: '14px 22px',
+    backgroundColor: '#4FC3F7',
+    color: '#FFF',
+    border: 'none',
+    borderRadius: '30px',
+    fontSize: '15px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    boxShadow: '0 6px 16px rgba(79, 195, 247, 0.4)',
+    zIndex: 100,
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    padding: '24px',
+    borderRadius: '20px',
+    width: '90%',
+    maxWidth: '400px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+  },
+  modalHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' },
+  modalCloseBtn: { background: 'none', border: 'none', fontSize: '18px', color: '#888', cursor: 'pointer' },
 };

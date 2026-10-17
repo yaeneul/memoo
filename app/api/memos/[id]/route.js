@@ -4,61 +4,36 @@ import { NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret1234';
 
-function getUserId(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader) return null;
-  const token = authHeader.split(' ')[1];
+export async function DELETE(request, { params }) {
   try {
+    // 1. 요청 헤더에서 JWT 인증 토큰 확인
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      return NextResponse.json({ message: '인증 정보가 없습니다.' }, { status: 401 });
+    }
+
+    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded.userId;
-  } catch {
-    return null;
-  }
-}
+    const userId = decoded.userId;
 
-// 메모 전체 조회 (GET)
-export async function GET(request) {
-  const userId = getUserId(request);
-  if (!userId) {
-    return NextResponse.json({ message: '인증 필요' }, { status: 401 });
-  }
+    // 2. URL 경로에서 메모 ID 가져오기
+    const memoId = params.id;
 
-  try {
-    const { rows } = await sql`
-      SELECT * FROM memos WHERE user_id = ${userId} ORDER BY created_at DESC;
+    if (!memoId) {
+      return NextResponse.json({ message: '삭제할 메모 ID가 필요합니다.' }, { status: 400 });
+    }
+
+    // 3. 본인의 메모만 삭제하도록 DB 처리
+    const result = await sql`
+      DELETE FROM memos 
+      WHERE id = ${memoId} AND user_id = ${userId};
     `;
-    return NextResponse.json(rows);
+
+    return NextResponse.json({ message: '메모가 삭제되었습니다.' }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: '메모 조회 중 오류 발생' }, { status: 500 });
-  }
-}
-
-// 메모 생성 (POST)
-export async function POST(request) {
-  const userId = getUserId(request);
-  if (!userId) {
-    return NextResponse.json({ message: '인증 필요' }, { status: 401 });
-  }
-
-  try {
-    const { text } = await request.json();
-
-    // memos 테이블이 없는 경우 자동 생성
-    await sql`
-      CREATE TABLE IF NOT EXISTS memos (
-        id SERIAL PRIMARY KEY,
-        user_id INT REFERENCES users(id),
-        text TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    await sql`
-      INSERT INTO memos (user_id, text) VALUES (${userId}, ${text});
-    `;
-
-    return NextResponse.json({ message: '메모 저장 완료' }, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ message: '메모 저장 중 오류 발생' }, { status: 500 });
+    return NextResponse.json(
+      { message: '삭제 처리 중 오류가 발생했거나 권한이 없습니다.' },
+      { status: 400 }
+    );
   }
 }

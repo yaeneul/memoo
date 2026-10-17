@@ -220,7 +220,6 @@ export default function Home() {
           <div style={styles.authHeader}>
             <span style={{ fontSize: '36px' }}>📌</span>
             <h1 style={styles.authTitle}>포스트잇 메모장</h1>
-            <p style={styles.authSubtitle}>소중한 기억들을 귀엽게 남겨보세요!</p>
           </div>
 
           <form onSubmit={handleAuthSubmit} style={styles.form}>

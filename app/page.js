@@ -12,7 +12,7 @@ export default function Home() {
   const [passwordInput, setPasswordInput] = useState('');
 
   // Memo & D-Day States
-  const [memoType, setMemoType] = useState('MEMO'); // 'MEMO' | 'DDAY'
+  const [memoType, setMemoType] = useState('MEMO');
   const [titleInput, setTitleInput] = useState('');
   const [contentInput, setContentInput] = useState('');
   const [targetDateInput, setTargetDateInput] = useState('');
@@ -26,7 +26,7 @@ export default function Home() {
   const [editContent, setEditContent] = useState('');
   const [editTargetDate, setEditTargetDate] = useState('');
 
-  // Drag & Drop State
+  // Drag & Drop
   const [draggedIndex, setDraggedIndex] = useState(null);
 
   // 급식 데이터
@@ -73,7 +73,7 @@ export default function Home() {
     return `${year}-${month}-${day}`;
   };
 
-  // D-Day 계산 함수
+  // D-Day 계산
   const calculateDDay = (targetDateStr) => {
     if (!targetDateStr) return null;
     const today = new Date();
@@ -265,7 +265,6 @@ export default function Home() {
     }
   };
 
-  // 카드 클릭
   const handleCardClick = (memo) => {
     const parsed = parseMemoText(memo.text);
     setSelectedMemo(memo);
@@ -275,12 +274,10 @@ export default function Home() {
     setIsEditing(false);
   };
 
-  // 메모 텍스트 파싱 헬퍼 함수
   const parseMemoText = (text = '') => {
     let targetDate = null;
     let workText = text;
 
-    // D-Day 파싱
     if (workText.startsWith('[DDAY:')) {
       const dateEndIndex = workText.indexOf(']\n');
       if (dateEndIndex !== -1) {
@@ -289,7 +286,6 @@ export default function Home() {
       }
     }
 
-    // 제목 파싱
     if (workText.startsWith('[제목: ') && workText.includes(']\n')) {
       const titleEndIndex = workText.indexOf(']\n');
       const title = workText.substring(5, titleEndIndex);
@@ -300,7 +296,7 @@ export default function Home() {
     return { isDDay: !!targetDate, targetDate, title: null, content: workText };
   };
 
-  // Drag & Drop 순서 교체
+  // Drag & Drop
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
@@ -335,7 +331,6 @@ export default function Home() {
   return (
     <main style={styles.container}>
       {!token ? (
-        /* 로그인 / 회원가입 */
         <div style={styles.authCard}>
           <div style={styles.authHeader}>
             <span style={{ fontSize: '36px' }}>📌</span>
@@ -370,7 +365,6 @@ export default function Home() {
           </button>
         </div>
       ) : (
-        /* 메인 화면 */
         <div style={styles.mainWrapper}>
           <header style={styles.header}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -388,9 +382,8 @@ export default function Home() {
             </div>
           </header>
 
-          {/* 그리드 영역 (Masonry 스타일 지원) */}
           <div style={styles.gridContainer}>
-            {/* 상단 고정: 오늘의 급식 */}
+            {/* 오늘의 급식 카드 (수동 크기 조절 가능) */}
             <div style={styles.todayMealPostit}>
               <div style={styles.postitTape}></div>
               <h3 style={{ margin: '6px 0', fontSize: '17px', color: '#D81B60' }}>
@@ -404,7 +397,7 @@ export default function Home() {
               </button>
             </div>
 
-            {/* 메모 및 디데이 포스트잇들 */}
+            {/* 메모 및 디데이 포스트잇 카드 (수동 크기 조절 가능) */}
             {memos.map((memo, index) => {
               const { isDDay, targetDate, title, content } = parseMemoText(memo.text);
               const color = isDDay ? '#FFECB3' : postitColors[index % postitColors.length];
@@ -423,15 +416,14 @@ export default function Home() {
                     ...styles.postit,
                     backgroundColor: color,
                     transform: `rotate(${rotateDeg}deg)`,
-                    cursor: 'grab',
                   }}
                 >
                   <div style={styles.postitTape}></div>
 
-                  {/* D-Day 배지 표시 */}
+                  {/* 한 줄로 정렬된 D-Day 배지 */}
                   {isDDay && (
                     <div style={styles.ddayBadge}>
-                      🎯 {dDayBadge} <span style={{ fontSize: '11px', fontWeight: 'normal', opacity: 0.8 }}>({targetDate})</span>
+                      🎯 {dDayBadge} <span style={styles.ddaySubText}>({targetDate})</span>
                     </div>
                   )}
 
@@ -446,7 +438,6 @@ export default function Home() {
             })}
           </div>
 
-          {/* 오른쪽 하단 Floating 버튼 */}
           <button onClick={() => setIsAddModalOpen(true)} style={styles.floatingBtn} title="새 메모/디데이 작성">
             ✏️ 새 메모 / 디데이 추가
           </button>
@@ -474,7 +465,7 @@ export default function Home() {
                     </button>
                   </div>
                   <textarea
-                    placeholder="해당 날짜의 급식 메뉴를 적어주세요 (예: 백미밥, 된장국, 제육볶음...)"
+                    placeholder="해당 날짜의 급식 메뉴를 적어주세요 (예: 백미밥, 된장국...)"
                     value={inputMeal}
                     onChange={(e) => setInputMeal(e.target.value)}
                     style={{ ...styles.textarea, minHeight: '80px' }}
@@ -509,7 +500,6 @@ export default function Home() {
                   <button onClick={() => setIsAddModalOpen(false)} style={styles.modalCloseBtn}>✕</button>
                 </div>
 
-                {/* 타입 선택 탭 */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                   <button
                     type="button"
@@ -638,8 +628,8 @@ export default function Home() {
                 ) : (
                   <div>
                     {parseMemoText(selectedMemo.text).isDDay && (
-                      <div style={{ ...styles.ddayBadge, marginBottom: '12px', display: 'inline-block' }}>
-                        🎯 {calculateDDay(parseMemoText(selectedMemo.text).targetDate)} ({parseMemoText(selectedMemo.text).targetDate})
+                      <div style={{ ...styles.ddayBadge, marginBottom: '12px' }}>
+                        🎯 {calculateDDay(parseMemoText(selectedMemo.text).targetDate)} <span style={styles.ddaySubText}>({parseMemoText(selectedMemo.text).targetDate})</span>
                       </div>
                     )}
                     {parseMemoText(selectedMemo.text).title && (
@@ -799,24 +789,31 @@ const styles = {
     cursor: 'pointer',
   },
 
-  // 그리드 (글자 수에 따라 높이가 유연하게 변하도록 fit-content 설정)
+  // 그리드 배치
   gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
+    display: 'flex',
+    flexWrap: 'wrap',
     gap: '24px',
     paddingBottom: '100px',
-    alignItems: 'start', // 내용 길이에 따라 가로 행이 유연하게 맞물림
+    alignItems: 'flex-start',
   },
+
+  // 급식 카드 (수동 Resize 설정)
   todayMealPostit: {
     position: 'relative',
     padding: '20px',
+    width: '240px',
+    minWidth: '180px',
     minHeight: '180px',
-    height: 'fit-content',
     borderRadius: '4px 4px 16px 4px',
     backgroundColor: '#F8BBD0',
     boxShadow: '3px 6px 12px rgba(216, 27, 96, 0.15)',
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
+    resize: 'both',       // 마우스로 가로/세로 자유롭게 크기 조절
+    overflow: 'auto',     // resize 필수 속성
+    boxSizing: 'border-box',
   },
   mealEditMiniBtn: {
     marginTop: '12px',
@@ -829,17 +826,23 @@ const styles = {
     fontWeight: 'bold',
     cursor: 'pointer',
   },
+
+  // 일반 포스트잇 & D-Day 카드 (수동 Resize 설정)
   postit: {
     position: 'relative',
     padding: '20px',
+    width: '240px',
+    minWidth: '180px',
     minHeight: '160px',
-    height: 'fit-content', // 글자 수 및 내용에 따라 포스트잇 세로 크기 자동 조절
     borderRadius: '4px 4px 16px 4px',
     boxShadow: '3px 6px 12px rgba(0, 0, 0, 0.08)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    resize: 'both',       // 마우스 우측 하단 모서리로 크기 자유 조절 가능
+    overflow: 'auto',     // resize 필수 속성
+    boxSizing: 'border-box',
   },
   postitTape: {
     position: 'absolute',
@@ -851,7 +854,12 @@ const styles = {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
   },
+
+  // D-Day 배지 한 줄 정렬 스타일
   ddayBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
     alignSelf: 'flex-start',
     backgroundColor: '#E65100',
     color: '#FFF',
@@ -860,7 +868,15 @@ const styles = {
     fontSize: '13px',
     fontWeight: 'bold',
     marginBottom: '8px',
+    whiteSpace: 'nowrap', // 한 줄 유지
   },
+  ddaySubText: {
+    fontSize: '11px',
+    fontWeight: 'normal',
+    opacity: 0.85,
+    whiteSpace: 'nowrap',
+  },
+
   postitTitle: { margin: '8px 0 6px 0', fontSize: '16px', fontWeight: 'bold', color: '#222' },
   postitContent: { margin: 0, fontSize: '14px', color: '#444', whiteSpace: 'pre-wrap', wordBreak: 'break-all', flexGrow: 1 },
   postitDate: { marginTop: '16px', fontSize: '11px', color: 'rgba(0, 0, 0, 0.4)', textAlign: 'right' },

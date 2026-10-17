@@ -1,39 +1,72 @@
 import { sql } from '@vercel/postgres';
 import jwt from 'jsonwebtoken';
-import { NextResponse } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret1234';
+const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
 
-export async function DELETE(request, { params }) {
+// 토큰 검증 헬퍼 함수
+function verifyToken(req) {
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) return null;
+  const token = authHeader.split(' ')[1];
   try {
-    // 1. 요청 헤더에서 JWT 인증 토큰 확인
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ message: '인증 정보가 없습니다.' }, { status: 401 });
-    }
+    return jwt.verify(token, JWT_SECRET);
+  } catch (err) {
+    return null;
+  }
+}
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.userId;
+// 1. 메모 수정 (PUT)
+export async function PUT(req, { params }) {
+  const user = verifyToken(req);
+  if (!user) {
+    return Response.json({ message: '인증되지 않은 요청입니다.' }, { status: 401 });
+  }
 
-    // 2. URL 경로에서 메모 ID 가져오기
-    const memoId = params.id;
+  const memoId = params.id;
+  const { text } = await req.json();
 
-    if (!memoId) {
-      return NextResponse.json({ message: '삭제할 메모 ID가 필요합니다.' }, { status: 400 });
-    }
-
-    // 3. 본인의 메모만 삭제하도록 DB 처리
+  try {
+    // 본인의 메모인지 확인 후 수정
     const result = await sql`
-      DELETE FROM memos 
-      WHERE id = ${memoId} AND user_id = ${userId};
+      UPDATE memos 
+      SET text = ${text} 
+      WHERE id = ${memoId} AND user_id = ${user.userId}
+      RETURNING *;
     `;
 
-    return NextResponse.json({ message: '메모가 삭제되었습니다.' }, { status: 200 });
+    if (result.rowCount === 0) {
+      return Response.json({ message: '메모를 찾을 수 없거나 권한이 없습니다.' }, { status: 403 });
+    }
+
+    return Response.json(result.rows[0], { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: '삭제 처리 중 오류가 발생했거나 권한이 없습니다.' },
-      { status: 400 }
-    );
+    return Response.json({ message: 'DB 에러가 발생했습니다.' }, { status: 500 });
+  }
+}
+
+// 2. 메모 삭제 (DELETE)
+export async function DELETE(req, { params }) {
+  const user = verifyToken(req);
+  if (!user) {
+    return Response.json({ message: '인증되지 않은 요청입니다.' }, { status: 401 });
+  }
+
+  const memoId = params.id;
+
+  try {
+    // 본인의 메모인지 확인 후 삭제
+    const result = await sql`
+      DELETE FROM memos 
+      WHERE id = ${memoId} AND user_id = ${user.userId}
+      RETURNING *;
+    `;
+
+    if (result.rowCount === 0) {
+      return Response.json({ message: '메모를 찾을 수 없거나 권한이 없습니다.' }, { status: 403 });
+    }
+
+    return Response.json({ message: '삭제 완료' }, { status: 200 });
+  } catch (error) {
+    return Response.json({ message: 'DB 에러가 발생했습니다.' }, { status: 500 });
   }
 }

@@ -15,13 +15,19 @@ export default function Home() {
   const [titleInput, setTitleInput] = useState('');
   const [contentInput, setContentInput] = useState('');
   const [memos, setMemos] = useState([]);
-  
+
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
+
+  // 급식 관련 상태 (로컬 스토리지 또는 메모와 연동)
+  const [isMealModalOpen, setIsMealModalOpen] = useState(false);
+  const [mealData, setMealData] = useState({}); // { 'YYYY-MM-DD': '메뉴 내용' }
+  const [inputDate, setInputDate] = useState('');
+  const [inputMeal, setInputMeal] = useState('');
 
   // 포스트잇 파스텔 컬러 배열
   const postitColors = [
@@ -41,7 +47,57 @@ export default function Home() {
       setUserEmail(savedEmail);
       fetchMemos(savedToken);
     }
+
+    // 저장된 급식 데이터 불러오기
+    const savedMeals = localStorage.getItem('school_meals');
+    if (savedMeals) {
+      try {
+        setMealData(JSON.parse(savedMeals));
+      } catch (e) {
+        console.error('급식 데이터 로드 실패');
+      }
+    }
+
+    // 오늘 날짜 기본값 설정 (YYYY-MM-DD)
+    const todayStr = getTodayString();
+    setInputDate(todayStr);
   }, []);
+
+  // 오늘 날짜 구하기 (YYYY-MM-DD)
+  const getTodayString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // 급식 저장하기
+  const handleSaveMeal = (e) => {
+    e.preventDefault();
+    if (!inputDate || !inputMeal.trim()) {
+      alert('날짜와 급식 내용을 입력해 주세요!');
+      return;
+    }
+
+    const updatedMeals = {
+      ...mealData,
+      [inputDate]: inputMeal.trim(),
+    };
+
+    setMealData(updatedMeals);
+    localStorage.setItem('school_meals', JSON.stringify(updatedMeals));
+    setInputMeal('');
+    alert(`📅 ${inputDate} 급식이 등록되었습니다!`);
+  };
+
+  // 급식 삭제하기
+  const handleDeleteMeal = (dateKey) => {
+    const updatedMeals = { ...mealData };
+    delete updatedMeals[dateKey];
+    setMealData(updatedMeals);
+    localStorage.setItem('school_meals', JSON.stringify(updatedMeals));
+  };
 
   // 로그인 및 회원가입
   const handleAuthSubmit = async (e) => {
@@ -185,7 +241,6 @@ export default function Home() {
     }
   };
 
-  // 포스트잇 클릭 시 모달 열기
   const handleCardClick = (memo) => {
     const { title, content } = parseMemoText(memo.text);
     setSelectedMemo(memo);
@@ -194,23 +249,24 @@ export default function Home() {
     setIsEditing(false);
   };
 
-  // 메모 텍스트에서 제목과 내용 분리하는 헬퍼 함수 (앞글자 잘림 수정 완료)
   const parseMemoText = (text) => {
     if (text && text.startsWith('[제목: ') && text.includes(']\n')) {
       const titleEndIndex = text.indexOf(']\n');
-      const title = text.substring(5, titleEndIndex); // [제목: 의 길이인 5로 수정
+      const title = text.substring(5, titleEndIndex);
       const content = text.substring(titleEndIndex + 2);
       return { title, content };
     }
     return { title: null, content: text || '' };
   };
 
-  // 날짜 포맷 함수
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   };
+
+  const todayStr = getTodayString();
+  const todayMeal = mealData[todayStr];
 
   return (
     <main style={styles.container}>
@@ -220,6 +276,7 @@ export default function Home() {
           <div style={styles.authHeader}>
             <span style={{ fontSize: '36px' }}>📌</span>
             <h1 style={styles.authTitle}>포스트잇 메모장</h1>
+            <p style={styles.authSubtitle}>소중한 기억들을 귀엽게 남겨보세요!</p>
           </div>
 
           <form onSubmit={handleAuthSubmit} style={styles.form}>
@@ -260,7 +317,13 @@ export default function Home() {
               <span style={{ fontSize: '28px' }}>📝</span>
               <h1 style={styles.headerTitle}>내 포스트잇 보드</h1>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <button
+                onClick={() => setIsMealModalOpen(true)}
+                style={styles.mealManageBtn}
+              >
+                🍱 식단표 등록/관리
+              </button>
               <span style={styles.userBadge}>👤 {userEmail}</span>
               <button onClick={handleLogout} style={styles.logoutBtn}>
                 로그아웃
@@ -270,13 +333,33 @@ export default function Home() {
 
           {/* 포스트잇 메모 그리드 영역 */}
           <div style={styles.gridContainer}>
+            {/* 상단 고정: 오늘의 급식 포스트잇 */}
+            <div style={styles.todayMealPostit}>
+              <div style={styles.postitTape}></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: '6px 0', fontSize: '17px', color: '#D81B60' }}>
+                  🍱 오늘의 급식 ({todayStr.slice(5)})
+                </h3>
+              </div>
+              <p style={{ margin: '10px 0', fontSize: '14px', color: '#333', whiteSpace: 'pre-wrap', flexGrow: 1 }}>
+                {todayMeal || '오늘 등록된 급식 식단이 없습니다.\n상단의 [식단표 등록/관리]에서 추가해 보세요!'}
+              </p>
+              <button
+                onClick={() => setIsMealModalOpen(true)}
+                style={styles.mealEditMiniBtn}
+              >
+                식단표 미리 적어두기 ➔
+              </button>
+            </div>
+
+            {/* 일반 작성 포스트잇 목록 */}
             {memos.length === 0 ? (
               <div style={styles.emptyBox}>
                 <p style={{ margin: 0, fontSize: '18px', color: '#777', fontWeight: 'bold' }}>
-                  아직 작성된 포스트잇이 없어요!
+                  작성된 일반 포스트잇이 없습니다.
                 </p>
                 <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#aaa' }}>
-                  오른쪽 하단의 ➕ 버튼을 눌러 첫 번째 메모를 남겨보세요.
+                  오른쪽 하단의 ➕ 버튼을 눌러 메모를 남겨보세요!
                 </p>
               </div>
             ) : (
@@ -316,6 +399,66 @@ export default function Home() {
             ✏️ 새 메모 추가
           </button>
 
+          {/* 급식 관리 모달 */}
+          {isMealModalOpen && (
+            <div style={styles.modalOverlay} onClick={() => setIsMealModalOpen(false)}>
+              <div style={{ ...styles.modalContent, maxWidth: '480px' }} onClick={(e) => e.stopPropagation()}>
+                <div style={styles.modalHeader}>
+                  <h2 style={{ margin: 0, fontSize: '18px', color: '#333' }}>
+                    🍱 날짜별 급식 식단 관리
+                  </h2>
+                  <button onClick={() => setIsMealModalOpen(false)} style={styles.modalCloseBtn}>
+                    ✕
+                  </button>
+                </div>
+
+                {/* 입력 폼 */}
+                <form onSubmit={handleSaveMeal} style={{ ...styles.form, marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input
+                      type="date"
+                      value={inputDate}
+                      onChange={(e) => setInputDate(e.target.value)}
+                      required
+                      style={{ ...styles.input, width: '160px' }}
+                    />
+                    <button type="submit" style={{ ...styles.primaryBtn, backgroundColor: '#FF80AB', width: 'auto', padding: '0 16px' }}>
+                      등록/수정
+                    </button>
+                  </div>
+                  <textarea
+                    placeholder="해당 날짜의 급식 메뉴를 적어주세요&#10;(예: 백미밥, 된장국, 제육볶음, 배추김치)"
+                    value={inputMeal}
+                    onChange={(e) => setInputMeal(e.target.value)}
+                    style={{ ...styles.textarea, minHeight: '80px' }}
+                  />
+                </form>
+
+                {/* 등록된 날짜별 급식 목록 */}
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>📋 등록된 식단 목록</h4>
+                <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {Object.keys(mealData).length === 0 ? (
+                    <p style={{ fontSize: '13px', color: '#aaa', margin: 0 }}>등록된 식단이 없습니다.</p>
+                  ) : (
+                    Object.keys(mealData).sort().map((dateKey) => (
+                      <div key={dateKey} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', backgroundColor: '#F5F5F5', borderRadius: '8px', fontSize: '13px' }}>
+                        <div>
+                          <strong>[{dateKey}]</strong>: {mealData[dateKey]}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteMeal(dateKey)}
+                          style={{ border: 'none', background: 'none', color: '#FF5252', cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 새 메모 작성 모달 */}
           {isAddModalOpen && (
             <div style={styles.modalOverlay} onClick={() => setIsAddModalOpen(false)}>
@@ -324,10 +467,7 @@ export default function Home() {
                   <h2 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
                     💛 새 포스트잇 쓰기
                   </h2>
-                  <button
-                    onClick={() => setIsAddModalOpen(false)}
-                    style={styles.modalCloseBtn}
-                  >
+                  <button onClick={() => setIsAddModalOpen(false)} style={styles.modalCloseBtn}>
                     ✕
                   </button>
                 </div>
@@ -356,11 +496,7 @@ export default function Home() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                    <button
-                      type="button"
-                      onClick={() => setIsAddModalOpen(false)}
-                      style={styles.cancelBtn}
-                    >
+                    <button type="button" onClick={() => setIsAddModalOpen(false)} style={styles.cancelBtn}>
                       취소
                     </button>
                     <button type="submit" style={styles.primaryBtn}>
@@ -372,7 +508,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* 클릭 시 작동하는 수정/삭제 상세 모달 */}
+          {/* 상세 / 수정 모달 */}
           {selectedMemo && (
             <div style={styles.modalOverlay} onClick={() => setSelectedMemo(null)}>
               <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -380,10 +516,7 @@ export default function Home() {
                   <h2 style={{ margin: 0, fontSize: '18px', color: '#333' }}>
                     {isEditing ? '✏️ 포스트잇 수정하기' : '📌 포스트잇 상세'}
                   </h2>
-                  <button
-                    onClick={() => setSelectedMemo(null)}
-                    style={styles.modalCloseBtn}
-                  >
+                  <button onClick={() => setSelectedMemo(null)} style={styles.modalCloseBtn}>
                     ✕
                   </button>
                 </div>
@@ -409,11 +542,7 @@ export default function Home() {
                       />
                     </div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                      <button
-                        type="button"
-                        onClick={() => setIsEditing(false)}
-                        style={styles.cancelBtn}
-                      >
+                      <button type="button" onClick={() => setIsEditing(false)} style={styles.cancelBtn}>
                         취소
                       </button>
                       <button type="submit" style={styles.primaryBtn}>
@@ -549,6 +678,16 @@ const styles = {
     marginBottom: '28px',
   },
   headerTitle: { margin: 0, fontSize: '22px', fontWeight: '800', color: '#444' },
+  mealManageBtn: {
+    padding: '8px 14px',
+    backgroundColor: '#FF80AB',
+    color: '#FFF',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
   userBadge: { fontSize: '13px', backgroundColor: '#FFF', padding: '8px 14px', borderRadius: '20px', color: '#666', border: '1px solid #E8E4D9' },
   logoutBtn: {
     padding: '8px 14px',
@@ -567,6 +706,28 @@ const styles = {
     gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
     gap: '24px',
     paddingBottom: '100px',
+  },
+  todayMealPostit: {
+    position: 'relative',
+    padding: '20px',
+    minHeight: '200px',
+    borderRadius: '4px 4px 16px 4px',
+    backgroundColor: '#F8BBD0', // 파스텔 진분홍
+    boxShadow: '3px 6px 12px rgba(216, 27, 96, 0.15)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  mealEditMiniBtn: {
+    marginTop: '10px',
+    padding: '6px',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '11px',
+    color: '#880E4F',
+    fontWeight: 'bold',
+    cursor: 'pointer',
   },
   postit: {
     position: 'relative',
@@ -595,7 +756,7 @@ const styles = {
   postitDate: { marginTop: '12px', fontSize: '11px', color: 'rgba(0, 0, 0, 0.4)', textAlign: 'right' },
 
   emptyBox: {
-    gridColumn: '1 / -1',
+    gridColumn: '2 / -1',
     textAlign: 'center',
     padding: '60px 20px',
     backgroundColor: 'rgba(255, 255, 255, 0.6)',

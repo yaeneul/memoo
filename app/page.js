@@ -267,7 +267,7 @@ export default function Home() {
     const diffX = Math.abs(e.clientX - mousePosRef.current.x);
     const diffY = Math.abs(e.clientY - mousePosRef.current.y);
 
-    // 마우스가 5px 이상 이동했다면 드래그/리사이즈로 간주하고 모달을 띄우지 않음
+    // 마우스가 5px 이상 이동했다면 드래그/리사이즈로 간주하고 모달을 띄우지 않
     if (diffX > 5 || diffY > 5) return;
 
     const parsed = parseMemoText(memo.text);

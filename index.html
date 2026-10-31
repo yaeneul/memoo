@@ -176,34 +176,6 @@
       border-color: var(--theme-border);
       color: var(--theme-text-main);
     }
-    .theme-btn-primary {
-      background-color: var(--theme-primary) !important;
-      color: var(--theme-primary-text) !important;
-    }
-
-    /* 고대비 모드 지원 */
-    body.theme-contrast .phone-frame,
-    body.theme-contrast .card-box {
-      background-color: #121212 !important;
-      border-color: #3F3F46 !important;
-      color: #FFFFFF !important;
-    }
-
-    body.theme-contrast #newPostModal > div,
-    body.theme-contrast #registerClothModal > div,
-    body.theme-contrast #editSelectModal > div,
-    body.theme-contrast #editClothModal > div {
-      background-color: #18181B !important;
-      border-color: #FACC15 !important;
-      color: #FFFFFF !important;
-    }
-
-    body.theme-contrast input,
-    body.theme-contrast textarea {
-      background-color: #27272A !important;
-      color: #FFFFFF !important;
-      border-color: #52525B !important;
-    }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb {
@@ -245,13 +217,59 @@
       <button onclick="speakCurrentPage()" class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center shrink-0 hover:bg-neutral-200 transition-all">
         <i class="ph ph-speaker-high text-lg font-bold"></i>
       </button>
-      <span class="text-xs font-black truncate flex-1" id="ttsBannerText">홈 화면입니다. 음성으로 시작하기와 4대 메뉴가 있습니다.</span>
+      <span class="text-xs font-black truncate flex-1" id="ttsBannerText">앱 초기 설정 화면입니다. 아이디, 출생 년도, 성별을 설정해 주세요.</span>
     </div>
+
+    <!-- ========================================== -->
+    <!-- [화면 0] 최초 실행 시 설정 화면 (온보딩) -->
+    <!-- ========================================== -->
+    <section id="screen-onboarding" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between">
+      <div class="space-y-4">
+        <div>
+          <h2 class="text-2xl font-black text-black">환영합니다! 👋</h2>
+          <p class="text-sm font-bold text-neutral-500 mt-1">시작하기 전 기본 정보를 설정해 주세요.</p>
+        </div>
+
+        <div class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-4 bg-white shadow-sm">
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1">사용자 아이디</label>
+            <input type="text" id="onboardUserIdInput" placeholder="예: 패션리더123" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="패션리더123" />
+          </div>
+
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1">출생 년도 (YYYY)</label>
+            <input type="number" id="onboardAgeInput" placeholder="예: 2001" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="2001" />
+          </div>
+
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1.5">성별</label>
+            <div class="grid grid-cols-3 gap-2 text-xs font-black">
+              <button type="button" onclick="selectOnboardGender(this, '남성')" class="onboard-gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm">남성</button>
+              <button type="button" onclick="selectOnboardGender(this, '여성')" class="onboard-gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">여성</button>
+              <button type="button" onclick="selectOnboardGender(this, '무관')" class="onboard-gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">무관</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-black text-neutral-400 block mb-1">자동 발급된 기기 고유 번호</label>
+            <div class="p-3 bg-neutral-100 border border-neutral-200 rounded-2xl text-xs font-mono font-bold text-neutral-600 truncate" id="onboardDeviceIdBox">
+              생성 중...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <button onclick="completeOnboarding()" class="w-full py-4.5 rounded-3xl bg-black hover:bg-neutral-800 text-white font-black text-base shadow-lg active:scale-95 transition-all">
+          설정 완료하고 시작하기
+        </button>
+      </div>
+    </section>
 
     <!-- ========================================== -->
     <!-- [화면 1] 메인 홈 화면 -->
     <!-- ========================================== -->
-    <section id="screen-home" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between">
+    <section id="screen-home" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden">
       <div class="space-y-4">
         
         <!-- 음성으로 시작하기 빅 버튼 -->
@@ -511,7 +529,7 @@
           </button>
         </div>
 
-        <!-- 🚨 커뮤니티 상단 경고 점수 및 상태 바 추가 -->
+        <!-- 커뮤니티 상단 경고 점수 및 상태 바 -->
         <div id="warningStatusBox" class="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-between text-xs font-black">
           <div class="flex items-center gap-2">
             <i class="ph ph-shield-warning text-lg text-amber-600"></i>
@@ -608,6 +626,11 @@
           </div>
 
           <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1">출생 년도 (YYYY)</label>
+            <input type="number" id="settingAgeInput" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="2001" />
+          </div>
+
+          <div>
             <label class="text-xs font-black text-neutral-500 block mb-1">활동 지역</label>
             <input type="text" id="settingRegionInput" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="서울특별시 마포구" />
           </div>
@@ -616,8 +639,16 @@
             <label class="text-xs font-black text-neutral-500 block mb-1.5">성별</label>
             <div class="grid grid-cols-3 gap-2 text-xs font-black">
               <button type="button" onclick="selectGender(this, '남성')" class="gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm">남성</button>
-              <button type="button" onclick="selectGender(this, '여성')" class="gender-btn py-3 rounded-2xl border-2 border-pink-300 bg-pink-50 text-pink-950">여성</button>
-              <button type="button" onclick="selectGender(this, '무관')" class="gender-btn py-3 rounded-2xl border-2 border-purple-300 bg-purple-50 text-purple-950">무관</button>
+              <button type="button" onclick="selectGender(this, '여성')" class="gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">여성</button>
+              <button type="button" onclick="selectGender(this, '무관')" class="gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">무관</button>
+            </div>
+          </div>
+
+          <!-- 기기 고유 번호 표시 -->
+          <div class="pt-1">
+            <label class="text-xs font-black text-neutral-400 block mb-1">기기 고유 번호 (자동 식별)</label>
+            <div class="p-3 bg-neutral-100 border border-neutral-200 rounded-2xl text-xs font-mono font-bold text-neutral-600 truncate" id="displayDeviceId">
+              자동 생성 중...
             </div>
           </div>
 
@@ -634,8 +665,8 @@
       </div>
     </section>
 
-    <!-- 하단 탭 바 -->
-    <nav class="h-16 border-t-2 border-neutral-200 px-3 flex items-center justify-around select-none bg-inherit shrink-0">
+    <!-- 하단 탭 바 (온보딩 화면에서는 숨김 처리용 클래스 제어) -->
+    <nav id="bottomNavBar" class="h-16 border-t-2 border-neutral-200 px-3 flex items-center justify-around select-none bg-inherit shrink-0 hidden">
       <button onclick="navigateTo('home')" id="nav-home" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-black font-black focus:outline-none">
         <i class="ph ph-house text-2xl font-bold"></i>
         <span class="text-xs font-black">홈</span>
@@ -781,10 +812,13 @@
   </div>
 
   <script>
-    let currentScreen = 'home';
+    let currentScreen = 'onboarding';
     let currentTheme = 'musinsa';
     let userId = '패션리더123';
+    let userAge = '2001';
     let selectedGender = '남성';
+    let onboardGender = '남성';
+    let deviceId = '';
     let ttsSpeed = 1.0;
 
     let warningCount = 0;
@@ -804,6 +838,22 @@
       '내눈버렸네', '이따구로입냐', '이딴옷당장버려라', '천쪼가리', '이딴', 
       '내알고리즘의나타나지마', '이런옷을입냐', '이런옷을입냐?', '아직도이런옷을입냐', '아직도이런옷을입냐?', '이런옷을아직도입냐'
     ];
+
+    // 📱 기기 고유 번호 자동 생성 및 관리
+    function initDeviceUniqueId() {
+      let storedId = localStorage.getItem('vstyle_device_id');
+      if (!storedId) {
+        storedId = 'DEV-' + Math.random().toString(36).substring(2, 9).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+        localStorage.setItem('vstyle_device_id', storedId);
+      }
+      deviceId = storedId;
+      
+      const deviceEl = document.getElementById('displayDeviceId');
+      if (deviceEl) deviceEl.innerText = deviceId;
+
+      const onboardEl = document.getElementById('onboardDeviceIdBox');
+      if (onboardEl) onboardEl.innerText = deviceId;
+    }
 
     // ⏰ 실시간 시계 업데이트 (초 제외, HH:MM 형식)
     function updateLiveClockAndWeather() {
@@ -829,11 +879,7 @@
       const tempEl = document.getElementById('homeTempLabel');
       const descEl = document.getElementById('homeWeatherDesc');
       if (tempEl) tempEl.innerText = `${Math.round(currentTemp)}°C`;
-      if (descEl) descEl.innerText = `맑음 · 실시간 동기화 완료 (${hoursFormat(now)})`;
-    }
-
-    function hoursFormat(date) {
-      return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+      if (descEl) descEl.innerText = `맑음 · 실시간 동기화 완료`;
     }
 
     // 🔊 TTS 음성 낭독 함수
@@ -852,7 +898,9 @@
 
     function speakCurrentPage() {
       let pageText = "";
-      if (currentScreen === 'home') {
+      if (currentScreen === 'onboarding') {
+        pageText = "앱 초기 설정 화면입니다. 아이디와 출생년도, 성별을 설정해 주세요.";
+      } else if (currentScreen === 'home') {
         pageText = "홈 화면입니다. 음성으로 시작하기와 4대 메뉴가 준비되어 있습니다.";
       } else if (currentScreen === 'closet') {
         pageText = `내 옷장 화면입니다. 현재 등록된 옷은 총 ${myClosetClothes.length}벌입니다.`;
@@ -878,6 +926,14 @@
       speakText(`음성 속도가 ${speed}배속으로 변경되었습니다.`);
     }
 
+    function selectOnboardGender(btn, gender) {
+      onboardGender = gender;
+      document.querySelectorAll('.onboard-gender-btn').forEach(b => {
+        b.className = 'onboard-gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700';
+      });
+      btn.className = 'onboard-gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm';
+    }
+
     function selectGender(btn, gender) {
       selectedGender = gender;
       document.querySelectorAll('.gender-btn').forEach(b => {
@@ -886,9 +942,35 @@
       btn.className = 'gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm';
     }
 
+    function completeOnboarding() {
+      const nickname = document.getElementById('onboardUserIdInput').value.trim();
+      const birthYear = document.getElementById('onboardAgeInput').value.trim();
+
+      if (!nickname) return alert('아이디를 입력해 주세요.');
+      if (!birthYear) return alert('출생 년도를 입력해 주세요.');
+
+      userId = nickname;
+      userAge = birthYear;
+      selectedGender = onboardGender;
+
+      document.getElementById('displayUserId').innerText = userId;
+      
+      const userData = {
+        userId: userId,
+        birthYear: userAge,
+        gender: selectedGender,
+        deviceId: deviceId
+      };
+      localStorage.setItem('vstyle_user_info', JSON.stringify(userData));
+
+      navigateTo('home');
+      alert('환영합니다! V-STYLE 설정이 완료되었습니다.');
+    }
+
     function saveUserInfoFromSettings() {
       const nickname = document.getElementById('settingUserIdInput').value.trim();
       const region = document.getElementById('settingRegionInput').value.trim();
+      const birthYear = document.getElementById('settingAgeInput').value.trim();
       
       if (nickname) {
         userId = nickname;
@@ -897,6 +979,19 @@
       if (region) {
         document.getElementById('homeLocationLabel').innerText = region;
       }
+      if (birthYear) {
+        userAge = birthYear;
+      }
+
+      const userData = {
+        userId: userId,
+        birthYear: userAge,
+        gender: selectedGender,
+        region: region,
+        deviceId: deviceId
+      };
+      localStorage.setItem('vstyle_user_info', JSON.stringify(userData));
+
       alert('내 정보가 성공적으로 저장되었습니다.');
       speakText('내 정보 저장이 완료되었습니다.');
     }
@@ -941,12 +1036,6 @@
     ];
     let currentOutfitIndex = 0;
 
-    const availableThemes = ['musinsa', 'mint', 'pink', 'sky', 'purple', 'contrast'];
-    const themeDisplayNames = {
-      'musinsa': '심플 화이트', 'mint': '프레시 민트', 'pink': '러블리 핑크',
-      'sky': '스카이 블루', 'purple': '트렌디 퍼플', 'contrast': '고대비 다크'
-    };
-
     function checkProfanityAndSanction(text) {
       const sanitizedText = text.replace(/[\s~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '');
       const hasImmediatePhrase = immediateBanPhrases.some((phrase) => sanitizedText.includes(phrase));
@@ -959,7 +1048,6 @@
       const penaltyScore = hasImmediatePhrase ? 1.5 : 1.0;
       warningCount = Number((warningCount + penaltyScore).toFixed(1));
 
-      // 🚨 경고 점수 UI 업데이트 반영
       document.getElementById('warningStatusLabel').innerText = `클린 소통방 (경고 누적: ${warningCount} / 3점)`;
 
       if (warningCount >= 3) {
@@ -974,10 +1062,17 @@
     }
 
     function navigateTo(screenId) {
-      ['home', 'closet', 'outfit-concept', 'outfit-result', 'community', 'settings'].forEach(id => {
+      ['onboarding', 'home', 'closet', 'outfit-concept', 'outfit-result', 'community', 'settings'].forEach(id => {
         const el = document.getElementById(`screen-${id}`);
         if (el) el.classList.add('hidden');
       });
+
+      const navBar = document.getElementById('bottomNavBar');
+      if (screenId === 'onboarding') {
+        if (navBar) navBar.classList.add('hidden');
+      } else {
+        if (navBar) navBar.classList.remove('hidden');
+      }
 
       ['home', 'closet', 'outfit', 'community', 'settings'].forEach(navKey => {
         const navEl = document.getElementById(`nav-${navKey}`);
@@ -1271,29 +1366,43 @@
     function applyThemeChoice(themeName) {
       currentTheme = themeName;
       const body = document.getElementById('appBody');
-      availableThemes.forEach(t => body.classList.remove(`theme-${t}`));
+      ['musinsa', 'mint', 'pink', 'sky', 'purple', 'contrast'].forEach(t => body.classList.remove(`theme-${t}`));
       body.classList.add(`theme-${themeName}`);
-      document.getElementById('quickThemeLabel').innerText = themeDisplayNames[themeName];
+      const names = {
+        'musinsa': '심플 화이트', 'mint': '프레시 민트', 'pink': '러블리 핑크',
+        'sky': '스카이 블루', 'purple': '트렌디 퍼플', 'contrast': '고대비 다크'
+      };
+      document.getElementById('quickThemeLabel').innerText = names[themeName];
     }
 
     function cycleNextTheme() {
+      const availableThemes = ['musinsa', 'mint', 'pink', 'sky', 'purple', 'contrast'];
       const nextIndex = (availableThemes.indexOf(currentTheme) + 1) % availableThemes.length;
       applyThemeChoice(availableThemes[nextIndex]);
     }
 
-    // 🔄 실시간 시계(초 제외) 및 날씨 자동 갱신
-    setInterval(updateLiveClockAndWeather, 1000);
-    setInterval(fetchLiveWeather, 600000);
-
-    updateLiveClockAndWeather();
-    fetchLiveWeather();
-    renderClosetList();
-    renderCommunityFeed();
-
+    // 초기 실행 시 유저 정보 존재 여부 확인 및 자동 기기 고유 번호 설정
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        speakCurrentPage();
-      }, 500);
+      initDeviceUniqueId();
+      updateLiveClockAndWeather();
+      fetchLiveWeather();
+      renderClosetList();
+      renderCommunityFeed();
+
+      setInterval(updateLiveClockAndWeather, 1000);
+      setInterval(fetchLiveWeather, 600000);
+
+      const savedUserInfo = localStorage.getItem('vstyle_user_info');
+      if (savedUserInfo) {
+        const info = JSON.parse(savedUserInfo);
+        userId = info.userId || '패션리더123';
+        userAge = info.birthYear || '2001';
+        selectedGender = info.gender || '남성';
+        document.getElementById('displayUserId').innerText = userId;
+        navigateTo('home');
+      } else {
+        navigateTo('onboarding');
+      }
     });
   </script>
 </body>

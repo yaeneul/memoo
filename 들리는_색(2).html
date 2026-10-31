@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-STYLE | 심플 배리어프리 패션</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* ======================================================== */
+    /* 1. 타이포그래피 & 글씨 크기 (화면 박스 고정, 텍스트만 확대) */
+    /* ======================================================== */
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    :focus-visible {
+      outline: 4px solid var(--theme-primary, #000000) !important;
+      outline-offset: 3px !important;
+    }
+
+    /* 폰트 크기 3단계 */
+    body.font-size-md {
+      --text-sm: 17px;
+      --text-base: 19px;
+      --text-lg: 22px;
+      --text-xl: 26px;
+      --text-2xl: 30px;
+    }
+    body.font-size-lg {
+      --text-sm: 19px;
+      --text-base: 22px;
+      --text-lg: 25px;
+      --text-xl: 29px;
+      --text-2xl: 34px;
+    }
+    body.font-size-xl {
+      --text-sm: 22px;
+      --text-base: 25px;
+      --text-lg: 28px;
+      --text-xl: 33px;
+      --text-2xl: 38px;
+    }
+
+    .phone-frame .text-xs,
+    .phone-frame .text-sm {
+      font-size: var(--text-sm) !important;
+      line-height: 1.45 !important;
+    }
+    .phone-frame .text-base {
+      font-size: var(--text-base) !important;
+      line-height: 1.4 !important;
+    }
+    .phone-frame .text-lg {
+      font-size: var(--text-lg) !important;
+      line-height: 1.35 !important;
+    }
+    .phone-frame .text-xl {
+      font-size: var(--text-xl) !important;
+      line-height: 1.3 !important;
+    }
+    .phone-frame .text-2xl,
+    .phone-frame .text-3xl {
+      font-size: var(--text-2xl) !important;
+      line-height: 1.25 !important;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 440px;
+      height: 840px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    /* ======================================================== */
+    /* 2. 테마 설정 */
+    /* ======================================================== */
+    body.theme-musinsa {
+      --theme-bg: #F4F4F5;
+      --theme-card-bg: #FFFFFF;
+      --theme-primary: #000000;
+      --theme-primary-hover: #262626;
+      --theme-primary-text: #FFFFFF;
+      --theme-border: #E4E4E7;
+      --theme-text-main: #09090B;
+      --theme-text-sub: #71717A;
+      --theme-header-bg: #000000;
+      --theme-header-text: #FFFFFF;
+    }
+
+    body.theme-mint {
+      --theme-bg: #F0FDF4;
+      --theme-card-bg: #FFFFFF;
+      --theme-primary: #059669;
+      --theme-primary-hover: #047857;
+      --theme-primary-text: #FFFFFF;
+      --theme-border: #BBF7D0;
+      --theme-text-main: #064E3B;
+      --theme-text-sub: #059669;
+      --theme-header-bg: #065F46;
+      --theme-header-text: #FFFFFF;
+    }
+
+    body.theme-pink {
+      --theme-bg: #FFF1F2;
+      --theme-card-bg: #FFFFFF;
+      --theme-primary: #E11D48;
+      --theme-primary-hover: #BE123C;
+      --theme-primary-text: #FFFFFF;
+      --theme-border: #FECDD3;
+      --theme-text-main: #881337;
+      --theme-text-sub: #BE123C;
+      --theme-header-bg: #9F1239;
+      --theme-header-text: #FFFFFF;
+    }
+
+    body.theme-sky {
+      --theme-bg: #F0F9FF;
+      --theme-card-bg: #FFFFFF;
+      --theme-primary: #0284C7;
+      --theme-primary-hover: #0369A1;
+      --theme-primary-text: #FFFFFF;
+      --theme-border: #BAE6FD;
+      --theme-text-main: #0C4A6E;
+      --theme-text-sub: #0284C7;
+      --theme-header-bg: #075985;
+      --theme-header-text: #FFFFFF;
+    }
+
+    body.theme-purple {
+      --theme-bg: #FAF5FF;
+      --theme-card-bg: #FFFFFF;
+      --theme-primary: #7C3AED;
+      --theme-primary-hover: #6D28D9;
+      --theme-primary-text: #FFFFFF;
+      --theme-border: #E9D5FF;
+      --theme-text-main: #4C1D95;
+      --theme-text-sub: #7C3AED;
+      --theme-header-bg: #5B21B6;
+      --theme-header-text: #FFFFFF;
+    }
+
+    body.theme-contrast {
+      --theme-bg: #000000;
+      --theme-card-bg: #121212;
+      --theme-primary: #FACC15;
+      --theme-primary-hover: #EAB308;
+      --theme-primary-text: #000000;
+      --theme-border: #3F3F46;
+      --theme-text-main: #FFFFFF;
+      --theme-text-sub: #D4D4D8;
+      --theme-header-bg: #18181B;
+      --theme-header-text: #FACC15;
+    }
+
+    body {
+      background-color: var(--theme-bg);
+      color: var(--theme-text-main);
+    }
+    .phone-frame {
+      background-color: var(--theme-card-bg);
+      border-color: var(--theme-border);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+    }
+    .card-box {
+      background-color: var(--theme-card-bg);
+      border-color: var(--theme-border);
+      color: var(--theme-text-main);
+    }
+    .theme-btn-primary {
+      background-color: var(--theme-primary) !important;
+      color: var(--theme-primary-text) !important;
+    }
+
+    /* 고대비 모드 지원 */
+    body.theme-contrast .phone-frame,
+    body.theme-contrast .card-box {
+      background-color: #121212 !important;
+      border-color: #3F3F46 !important;
+      color: #FFFFFF !important;
+    }
+
+    body.theme-contrast #newPostModal > div,
+    body.theme-contrast #registerClothModal > div,
+    body.theme-contrast #editSelectModal > div,
+    body.theme-contrast #editClothModal > div {
+      background-color: #18181B !important;
+      border-color: #FACC15 !important;
+      color: #FFFFFF !important;
+    }
+
+    body.theme-contrast input,
+    body.theme-contrast textarea {
+      background-color: #27272A !important;
+      color: #FFFFFF !important;
+      border-color: #52525B !important;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb {
+      background: #D4D4D8;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="theme-musinsa font-size-md min-h-screen flex flex-col items-center justify-start p-2 sm:p-5 transition-colors duration-200" id="appBody">
+
+  <!-- ========================================== -->
+  <!-- 최상단 헤더 -->
+  <!-- ========================================== -->
+  <header class="w-full max-w-[440px] mb-3 px-4 py-3 bg-white rounded-2xl border border-neutral-300 shadow-sm flex items-center justify-between">
+    <span class="font-black tracking-wider text-black text-base">V-STYLE</span>
+    
+    <button onclick="cycleNextTheme()" class="px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 font-bold text-xs flex items-center gap-1.5 transition-all" title="테마 색상 변경">
+      <i class="ph ph-palette text-sm"></i>
+      <span id="quickThemeLabel">심플 화이트</span>
+    </button>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 모바일 프레임 컨테이너 (고정 440px x 840px) -->
+  <!-- ========================================== -->
+  <main class="phone-frame border-2 rounded-[36px] overflow-hidden flex flex-col relative transition-all">
+    
+    <!-- 실시간 시계 & 우측 상단 패션 아이디 상태바 -->
+    <div class="h-10 px-6 flex items-center justify-between text-xs font-black border-b border-neutral-200 select-none bg-inherit shrink-0">
+      <span id="currentTime">00:00</span>
+      <div class="flex items-center gap-1.5">
+        <span class="text-neutral-400 font-bold">아이디:</span>
+        <span class="text-blue-600 font-black" id="displayUserId">패션리더123</span>
+      </div>
+    </div>
+
+    <!-- 화면 설명 낭독 배너 -->
+    <div class="bg-black text-white px-4 py-3 flex items-center gap-3 shrink-0 select-none">
+      <button onclick="speakCurrentPage()" class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center shrink-0 hover:bg-neutral-200 transition-all">
+        <i class="ph ph-speaker-high text-lg font-bold"></i>
+      </button>
+      <span class="text-xs font-black truncate flex-1" id="ttsBannerText">홈 화면입니다. 음성으로 시작하기와 4대 메뉴가 있습니다.</span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- [화면 1] 메인 홈 화면 -->
+    <!-- ========================================== -->
+    <section id="screen-home" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between">
+      <div class="space-y-4">
+        
+        <!-- 음성으로 시작하기 빅 버튼 -->
+        <button onclick="speakCurrentPage()" class="w-full py-6 px-6 rounded-3xl bg-black hover:bg-neutral-800 text-white font-black text-xl flex items-center justify-center gap-3.5 shadow-lg active:scale-95 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400 text-black flex items-center justify-center text-2xl font-bold shadow">
+            <i class="ph ph-microphone"></i>
+          </div>
+          <span>음성으로 시작하기</span>
+        </button>
+
+        <!-- 실시간 날씨 및 온도 위젯 -->
+        <div class="card-box border-2 border-neutral-300 rounded-3xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-1.5 font-bold text-xs text-neutral-500 mb-0.5">
+              <i class="ph ph-map-pin"></i>
+              <span id="homeLocationLabel">서울특별시 마포구</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl font-black text-black" id="homeTempLabel">--°C</span>
+              <span class="text-sm font-bold text-neutral-600" id="homeWeatherDesc">실시간 날씨 동기화 중...</span>
+            </div>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl font-black" id="homeWeatherIconBox">
+            <i class="ph ph-sun" id="homeWeatherIcon"></i>
+          </div>
+        </div>
+
+        <!-- 핵심 4대 메뉴 카드 -->
+        <div class="grid grid-cols-2 gap-3.5 pt-1">
+          <button onclick="navigateTo('closet')" class="h-36 p-5 rounded-3xl border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 active:scale-95 transition-all text-left flex flex-col justify-between shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-amber-200 text-amber-800 flex items-center justify-center text-xl font-bold">
+              <i class="ph ph-t-shirt"></i>
+            </div>
+            <span class="block text-xl font-black tracking-tight text-amber-950">내 옷장</span>
+          </button>
+
+          <button onclick="navigateTo('outfit-concept')" class="h-36 p-5 rounded-3xl border-2 border-sky-400 bg-sky-50 hover:bg-sky-100 active:scale-95 transition-all text-left flex flex-col justify-between shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-sky-200 text-sky-800 flex items-center justify-center text-xl font-bold">
+              <i class="ph ph-sparkle"></i>
+            </div>
+            <span class="block text-xl font-black tracking-tight text-sky-950">AI 코디</span>
+          </button>
+
+          <button onclick="navigateTo('community')" class="h-36 p-5 rounded-3xl border-2 border-pink-400 bg-pink-50 hover:bg-pink-100 active:scale-95 transition-all text-left flex flex-col justify-between shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-pink-200 text-pink-800 flex items-center justify-center text-xl font-bold">
+              <i class="ph ph-instagram-logo"></i>
+            </div>
+            <span class="block text-xl font-black tracking-tight text-pink-950">커뮤니티</span>
+          </button>
+
+          <button onclick="navigateTo('settings')" class="h-36 p-5 rounded-3xl border-2 border-purple-400 bg-purple-50 hover:bg-purple-100 active:scale-95 transition-all text-left flex flex-col justify-between shadow-sm">
+            <div class="w-10 h-10 rounded-2xl bg-purple-200 text-purple-800 flex items-center justify-center text-xl font-bold">
+              <i class="ph ph-gear"></i>
+            </div>
+            <span class="block text-xl font-black tracking-tight text-purple-950">설정</span>
+          </button>
+        </div>
+
+        <!-- 하단 안내 메세지 -->
+        <div class="py-3 px-4 rounded-2xl bg-neutral-100 border border-neutral-200 flex items-center justify-center gap-2 text-neutral-800 text-xs font-black">
+          <i class="ph ph-user-sound text-lg"></i>
+          <span>원하는 기능을 편하게 말씀하세요</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- [화면 2] 내 옷장 -->
+    <!-- ========================================== -->
+    <section id="screen-closet" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden space-y-4">
+      <div class="space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-neutral-200">
+          <button onclick="navigateTo('home')" class="py-2 px-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black font-black text-sm flex items-center gap-1.5 transition-all">
+            <i class="ph ph-arrow-left font-extrabold"></i>
+            <span>홈으로</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-lg font-black text-black">내 옷장</span>
+            <span id="closetCountBadge" class="px-2.5 py-0.5 rounded-full bg-black text-white text-xs font-black">1벌</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button onclick="openRegisterClothModal()" class="p-4 rounded-3xl bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-700 font-black text-left flex flex-col justify-between shadow-md active:scale-95 transition-all min-h-[105px]">
+            <div class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center text-2xl font-black">
+              <i class="ph ph-plus-circle"></i>
+            </div>
+            <div>
+              <span class="block text-lg font-black leading-tight">옷 등록하기</span>
+              <span class="text-xs font-bold text-blue-100 mt-0.5 block">촬영 · 수동 등록</span>
+            </div>
+          </button>
+
+          <button onclick="openEditSelectModal()" class="p-4 rounded-3xl bg-amber-500 hover:bg-amber-600 text-black border-2 border-amber-600 font-black text-left flex flex-col justify-between shadow-md active:scale-95 transition-all min-h-[105px]">
+            <div class="w-10 h-10 rounded-2xl bg-amber-400 text-black flex items-center justify-center text-2xl font-black">
+              <i class="ph ph-pencil-simple-line"></i>
+            </div>
+            <div>
+              <span class="block text-lg font-black leading-tight">정보 수정하기</span>
+              <span class="text-xs font-bold text-amber-950 mt-0.5 block">계절 · 옷감 정보 변경</span>
+            </div>
+          </button>
+        </div>
+
+        <div id="closetItemsContainer" class="space-y-4"></div>
+
+      </div>
+
+      <div class="pt-3">
+        <button onclick="navigateTo('home')" class="w-full py-4 rounded-2xl bg-neutral-200 hover:bg-neutral-300 text-black font-black text-base transition-all">
+          홈 화면으로 이동
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- [화면 3-A] AI 코디: 1단계 컨셉 선택 -->
+    <!-- ========================================== -->
+    <section id="screen-outfit-concept" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden space-y-4">
+      <div class="space-y-5">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-neutral-200">
+          <button onclick="navigateTo('home')" class="py-2 px-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black font-black text-sm flex items-center gap-1.5 transition-all">
+            <i class="ph ph-arrow-left font-extrabold"></i>
+            <span>홈으로</span>
+          </button>
+          <span class="text-sm font-black text-neutral-400">1단계 / 컨셉 선택</span>
+        </div>
+
+        <div>
+          <h2 class="text-2xl font-black text-black">어떤 상황에<br>입으실 건가요?</h2>
+          <p class="text-sm font-bold text-neutral-500 mt-1">원하시는 상황을 하나 선택해 주세요</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button onclick="selectSituation(this, '등교/출근', 'blue')" class="situation-btn h-32 p-4 rounded-3xl border-2 border-blue-600 bg-blue-600 text-white font-black text-left flex flex-col justify-between shadow-sm" data-color="blue" data-name="등교/출근">
+            <div class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center text-xl">
+              <i class="ph ph-briefcase"></i>
+            </div>
+            <span class="text-lg">등교 / 출근</span>
+          </button>
+
+          <button onclick="selectSituation(this, '데이트', 'pink')" class="situation-btn h-32 p-4 rounded-3xl border-2 border-pink-400 bg-pink-50 text-pink-950 font-black text-left flex flex-col justify-between shadow-sm" data-color="pink" data-name="데이트">
+            <div class="w-10 h-10 rounded-2xl bg-pink-200 text-pink-800 flex items-center justify-center text-xl">
+              <i class="ph ph-heart"></i>
+            </div>
+            <span class="text-lg">데이트</span>
+          </button>
+
+          <button onclick="selectSituation(this, '운동', 'green')" class="situation-btn h-32 p-4 rounded-3xl border-2 border-emerald-400 bg-emerald-50 text-emerald-950 font-black text-left flex flex-col justify-between shadow-sm" data-color="green" data-name="운동">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-200 text-emerald-800 flex items-center justify-center text-xl">
+              <i class="ph ph-sneaker-move"></i>
+            </div>
+            <span class="text-lg">운동 / 야외</span>
+          </button>
+
+          <button onclick="selectSituation(this, '일상', 'amber')" class="situation-btn h-32 p-4 rounded-3xl border-2 border-amber-400 bg-amber-50 text-amber-950 font-black text-left flex flex-col justify-between shadow-sm" data-color="amber" data-name="일상">
+            <div class="w-10 h-10 rounded-2xl bg-amber-200 text-amber-800 flex items-center justify-center text-xl">
+              <i class="ph ph-coffee"></i>
+            </div>
+            <span class="text-lg">편안한 일상</span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="pt-4">
+        <button onclick="proceedToOutfitResult()" class="w-full py-4.5 rounded-3xl bg-blue-600 hover:bg-blue-700 text-white font-black text-lg shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all">
+          <span>선택 완료하고 코디 추천받기</span>
+          <i class="ph ph-arrow-right font-black"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- [화면 3-B] AI 코디: 2단계 추천 코디 슬라이드 -->
+    <!-- ========================================== -->
+    <section id="screen-outfit-result" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden space-y-4">
+      <div class="space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-neutral-200">
+          <button onclick="navigateTo('outfit-concept')" class="py-2 px-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black font-black text-sm flex items-center gap-1.5 transition-all">
+            <i class="ph ph-arrow-left font-extrabold"></i>
+            <span>상황 변경</span>
+          </button>
+          <span class="text-sm font-black text-blue-600" id="currentConceptBadge">등교/출근 코디 (실시간 반영됨)</span>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <span class="text-base font-black text-black">
+            추천 코디 <span id="outfitIndexLabel" class="text-blue-600">1 / 3</span>
+          </span>
+        </div>
+
+        <div id="outfitSlideContainer" class="card-box border-2 border-black rounded-3xl p-6 space-y-4 bg-white shadow-md relative min-h-[380px] flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span id="slideTag" class="px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-black">
+                추천 1번 · 출근 베스트
+              </span>
+              <span class="text-xs font-bold text-neutral-400">실시간 날씨 100% 매칭</span>
+            </div>
+
+            <div id="slideIconBox" class="w-full h-36 rounded-2xl bg-blue-50 border border-blue-200 flex flex-col items-center justify-center p-3 text-center mb-3">
+              <i id="slideIcon" class="ph ph-coat-hanger text-5xl text-blue-700 mb-1"></i>
+              <span id="slideShortItems" class="text-sm font-black text-blue-950">베이지 트렌치 + 셔츠 + 슬랙스</span>
+            </div>
+
+            <h3 id="slideTitle" class="text-2xl font-black text-black leading-tight mb-2">단정한 가을 트렌치 룩</h3>
+            <p id="slideDesc" class="text-sm font-bold text-neutral-600 leading-relaxed">
+              조합: 베이지 트렌치코트 + 아이보리 셔츠 + 차콜 슬랙스
+            </p>
+          </div>
+
+          <button onclick="confirmSelectedOutfit()" id="slideSelectBtn" class="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-base shadow-md active:scale-95 transition-all">
+            이 코디 선택하기
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button onclick="prevOutfitSlide()" class="py-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black border-2 border-neutral-300 font-black text-base flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+            <i class="ph ph-caret-left-bold text-lg"></i>
+            <span>이전 코디</span>
+          </button>
+          <button onclick="nextOutfitSlide()" class="py-3.5 rounded-2xl bg-black hover:bg-neutral-800 text-white font-black text-base flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+            <span>다음 코디</span>
+            <i class="ph ph-caret-right-bold text-lg"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="pt-2">
+        <button onclick="navigateTo('home')" class="w-full py-4 rounded-2xl bg-neutral-200 text-black font-black text-base">
+          홈 화면으로 이동
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- [화면 4] 커뮤니티 -->
+    <!-- ========================================== -->
+    <section id="screen-community" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden space-y-4 relative">
+      <div class="space-y-4">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-neutral-200">
+          <button onclick="navigateTo('home')" class="py-2 px-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black font-black text-sm flex items-center gap-1.5 transition-all">
+            <i class="ph ph-arrow-left font-extrabold"></i>
+            <span>홈으로</span>
+          </button>
+          <span class="text-lg font-black">스타일 피드</span>
+          <button onclick="openPostModal()" class="py-2 px-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center gap-1 shadow">
+            <span class="text-base font-black leading-none">+</span>
+            <span>코디 올리기</span>
+          </button>
+        </div>
+
+        <!-- 🚨 커뮤니티 상단 경고 점수 및 상태 바 추가 -->
+        <div id="warningStatusBox" class="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-between text-xs font-black">
+          <div class="flex items-center gap-2">
+            <i class="ph ph-shield-warning text-lg text-amber-600"></i>
+            <span id="warningStatusLabel" class="text-amber-950">클린 소통방 (경고 누적: 0.0 / 3점)</span>
+          </div>
+          <span id="banStatusTag" class="text-emerald-700 font-bold">정상 이용 중</span>
+        </div>
+
+        <!-- 동적 피드 컨테이너 -->
+        <div class="space-y-5 pb-5" id="communityFeedContainer"></div>
+
+      </div>
+
+      <div class="pt-2">
+        <button onclick="navigateTo('home')" class="w-full py-4 rounded-2xl bg-neutral-200 text-black font-black text-base">
+          홈 화면으로 이동
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- [화면 5] 설정 및 접근성 -->
+    <!-- ========================================== -->
+    <section id="screen-settings" class="flex-1 overflow-y-auto p-5 flex flex-col justify-between hidden space-y-5">
+      <div class="space-y-5">
+        
+        <div class="flex items-center justify-between pb-2 border-b border-neutral-200">
+          <button onclick="navigateTo('home')" class="py-2 px-3.5 rounded-2xl bg-neutral-100 hover:bg-neutral-200 text-black font-black text-sm flex items-center gap-1.5 transition-all">
+            <i class="ph ph-arrow-left font-extrabold"></i>
+            <span>홈으로</span>
+          </button>
+          <span class="text-lg font-black">설정 및 접근성</span>
+        </div>
+
+        <!-- 글씨 크기 조절 -->
+        <div class="card-box border-2 border-black rounded-3xl p-5 space-y-3 bg-white shadow-sm">
+          <label class="text-base font-black block">글씨 크기 조절</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="setFontSize('md', this)" class="font-size-btn py-3.5 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white text-sm font-black text-center shadow-sm" data-size="md">보통</button>
+            <button onclick="setFontSize('lg', this)" class="font-size-btn py-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50 text-amber-950 text-sm font-black text-center" data-size="lg">크게</button>
+            <button onclick="setFontSize('xl', this)" class="font-size-btn py-3.5 rounded-2xl border-2 border-rose-400 bg-rose-50 text-rose-950 text-sm font-black text-center" data-size="xl">아주 크게</button>
+          </div>
+        </div>
+
+        <!-- 화면 색상 모드 -->
+        <div class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-3 shadow-sm">
+          <label class="text-base font-black block">화면 색상 모드</label>
+          <div class="grid grid-cols-2 gap-2 text-sm font-black">
+            <button onclick="applyThemeChoice('musinsa')" class="p-3.5 rounded-2xl border-2 border-black bg-white text-black flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-black shrink-0 border"></span>
+              <span>심플 화이트</span>
+            </button>
+            <button onclick="applyThemeChoice('mint')" class="p-3.5 rounded-2xl border-2 border-emerald-400 bg-emerald-50 text-emerald-900 flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-emerald-600 shrink-0"></span>
+              <span>프레시 민트</span>
+            </button>
+            <button onclick="applyThemeChoice('pink')" class="p-3.5 rounded-2xl border-2 border-pink-400 bg-pink-50 text-pink-900 flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-pink-600 shrink-0"></span>
+              <span>러블리 핑크</span>
+            </button>
+            <button onclick="applyThemeChoice('sky')" class="p-3.5 rounded-2xl border-2 border-sky-400 bg-sky-50 text-sky-900 flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-sky-600 shrink-0"></span>
+              <span>스카이 블루</span>
+            </button>
+            <button onclick="applyThemeChoice('purple')" class="p-3.5 rounded-2xl border-2 border-purple-400 bg-purple-50 text-purple-900 flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-purple-600 shrink-0"></span>
+              <span>트렌디 퍼플</span>
+            </button>
+            <button onclick="applyThemeChoice('contrast')" class="p-3.5 rounded-2xl border-2 border-neutral-700 bg-black text-white flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full bg-yellow-400 shrink-0"></span>
+              <span>고대비 다크</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 음성 낭독 속도 -->
+        <div class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-3 bg-white shadow-sm">
+          <label class="text-base font-black block">음성 낭독 속도</label>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="setTtsSpeed(0.8, this)" class="tts-speed-btn py-3.5 rounded-2xl border-2 border-sky-400 bg-sky-50 text-sky-950 text-xs font-black text-center" data-speed="0.8">0.8x</button>
+            <button onclick="setTtsSpeed(1.0, this)" class="tts-speed-btn py-3.5 rounded-2xl border-2 border-emerald-600 bg-emerald-600 text-white text-xs font-black text-center shadow-sm" data-speed="1.0">1.0x</button>
+            <button onclick="setTtsSpeed(1.2, this)" class="tts-speed-btn py-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50 text-amber-950 text-xs font-black text-center" data-speed="1.2">1.2x</button>
+            <button onclick="setTtsSpeed(1.5, this)" class="tts-speed-btn py-3.5 rounded-2xl border-2 border-rose-300 bg-rose-50 text-rose-950 text-xs font-black text-center" data-speed="1.5">1.5x</button>
+          </div>
+        </div>
+
+        <!-- 내 정보 수정 -->
+        <div class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-3 bg-white shadow-sm">
+          <label class="text-base font-black block">내 정보 수정</label>
+          
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1">사용자 닉네임</label>
+            <input type="text" id="settingUserIdInput" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="패션리더123" />
+          </div>
+
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1">활동 지역</label>
+            <input type="text" id="settingRegionInput" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" value="서울특별시 마포구" />
+          </div>
+
+          <div>
+            <label class="text-xs font-black text-neutral-500 block mb-1.5">성별</label>
+            <div class="grid grid-cols-3 gap-2 text-xs font-black">
+              <button type="button" onclick="selectGender(this, '남성')" class="gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm">남성</button>
+              <button type="button" onclick="selectGender(this, '여성')" class="gender-btn py-3 rounded-2xl border-2 border-pink-300 bg-pink-50 text-pink-950">여성</button>
+              <button type="button" onclick="selectGender(this, '무관')" class="gender-btn py-3 rounded-2xl border-2 border-purple-300 bg-purple-50 text-purple-950">무관</button>
+            </div>
+          </div>
+
+          <button onclick="saveUserInfoFromSettings()" class="w-full py-4 rounded-2xl bg-black text-white font-black text-sm shadow-md mt-2 active:scale-95 transition-all">
+            정보 저장하기
+          </button>
+        </div>
+
+        <!-- 저장 후 홈으로 이동 빅 버튼 -->
+        <button onclick="saveAndGoHome()" class="w-full py-4.5 bg-black hover:bg-neutral-800 text-white rounded-3xl font-black text-base shadow-lg active:scale-95 transition-all">
+          저장 후 홈으로 이동
+        </button>
+
+      </div>
+    </section>
+
+    <!-- 하단 탭 바 -->
+    <nav class="h-16 border-t-2 border-neutral-200 px-3 flex items-center justify-around select-none bg-inherit shrink-0">
+      <button onclick="navigateTo('home')" id="nav-home" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-black font-black focus:outline-none">
+        <i class="ph ph-house text-2xl font-bold"></i>
+        <span class="text-xs font-black">홈</span>
+      </button>
+      <button onclick="navigateTo('closet')" id="nav-closet" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-neutral-400 font-bold hover:text-black focus:outline-none">
+        <i class="ph ph-t-shirt text-2xl font-bold"></i>
+        <span class="text-xs">옷장</span>
+      </button>
+      <button onclick="navigateTo('outfit-concept')" id="nav-outfit" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-neutral-400 font-bold hover:text-black focus:outline-none">
+        <i class="ph ph-sparkle text-2xl font-bold"></i>
+        <span class="text-xs">AI 코디</span>
+      </button>
+      <button onclick="navigateTo('community')" id="nav-community" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-neutral-400 font-bold hover:text-black focus:outline-none">
+        <i class="ph ph-instagram-logo text-2xl font-bold"></i>
+        <span class="text-xs">커뮤니티</span>
+      </button>
+      <button onclick="navigateTo('settings')" id="nav-settings" class="flex-1 py-1 flex flex-col items-center gap-0.5 text-neutral-400 font-bold hover:text-black focus:outline-none">
+        <i class="ph ph-gear text-2xl font-bold"></i>
+        <span class="text-xs">설정</span>
+      </button>
+    </nav>
+  </main>
+
+  <!-- 새 코디 게시물 올리기 모달 -->
+  <div id="newPostModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 border-2 border-black shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-1 border-b border-neutral-200">
+        <h3 class="text-lg font-black text-black">새 코디 올리기</h3>
+        <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-neutral-100 text-black flex items-center justify-center font-bold">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <div class="border-2 border-dashed border-neutral-300 rounded-2xl p-4 text-center bg-neutral-50 cursor-pointer" onclick="simulateSelectPhoto()">
+        <i class="ph ph-camera text-3xl text-neutral-500 mb-1"></i>
+        <span class="block text-sm font-black text-black" id="newPostPhotoLabel">착장 사진 첨부</span>
+      </div>
+
+      <div>
+        <label class="text-sm font-black text-black mb-1 block">글 내용</label>
+        <textarea id="newPostText" rows="3" placeholder="오늘 입은 코디를 적어보세요..." class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl p-3 text-sm font-bold text-black focus:outline-none"></textarea>
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button onclick="closePostModal()" class="flex-1 py-3.5 bg-neutral-200 rounded-2xl text-sm font-black text-neutral-800">취소</button>
+        <button onclick="submitNewPost()" class="flex-1 py-3.5 bg-blue-600 rounded-2xl text-sm font-black text-white shadow">등록하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 새 옷 등록 모달 -->
+  <div id="registerClothModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 border-2 border-black shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-1 border-b border-neutral-200">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-black">
+            <i class="ph ph-plus-circle text-lg"></i>
+          </div>
+          <h3 class="text-lg font-black text-black">새 옷 등록하기</h3>
+        </div>
+        <button onclick="closeRegisterClothModal()" class="w-8 h-8 rounded-full bg-neutral-100 text-black flex items-center justify-center font-bold">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+
+      <div class="border-2 border-dashed border-neutral-300 rounded-2xl p-4 text-center bg-neutral-50 cursor-pointer" onclick="simulateRegisterPhoto()">
+        <i class="ph ph-camera text-3xl text-blue-600 mb-1"></i>
+        <span class="block text-sm font-black text-black" id="regPhotoLabel">📷 옷 사진 촬영 또는 앨범 선택</span>
+      </div>
+
+      <div>
+        <label class="text-sm font-black text-black block mb-1">옷 이름 / 종류</label>
+        <input type="text" id="regClothName" placeholder="예: 카키 오버핏 야상 자켓" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" />
+      </div>
+
+      <div>
+        <label class="text-sm font-black text-black block mb-1.5">어느 계절에 입나요?</label>
+        <div class="grid grid-cols-2 gap-2 text-xs font-black">
+          <button type="button" onclick="selectRegSeason(this, '봄 · 가을 (간절기)')" class="reg-season-btn py-3 px-2 rounded-2xl border-2 border-amber-500 bg-amber-500 text-black">🍂 봄 · 가을</button>
+          <button type="button" onclick="selectRegSeason(this, '여름 (무더위/장마)')" class="reg-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">☀️ 여름</button>
+          <button type="button" onclick="selectRegSeason(this, '겨울 (한파/보온)')" class="reg-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">❄️ 겨울</button>
+          <button type="button" onclick="selectRegSeason(this, '사계절 (올시즌)')" class="reg-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700">🌿 사계절</button>
+        </div>
+        <input type="hidden" id="regClothSeason" value="봄 · 가을 (간절기)" />
+      </div>
+
+      <div>
+        <label class="text-sm font-black text-black block mb-1">옷감 및 재질 특징 직접 입력</label>
+        <textarea id="regClothMaterial" rows="2" placeholder="예: 면 100% · 부드럽고 땀 흡수가 잘 됨" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl p-3 text-sm font-bold text-black focus:outline-none"></textarea>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <button onclick="closeRegisterClothModal()" class="flex-1 py-3.5 bg-neutral-200 rounded-2xl text-sm font-black text-neutral-800">취소</button>
+        <button onclick="saveNewCloth()" class="flex-1 py-3.5 bg-blue-600 rounded-2xl text-sm font-black text-white shadow-md">옷장에 등록 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수정 선택 모달 -->
+  <div id="editSelectModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 border-2 border-black shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-1 border-b border-neutral-200">
+        <h3 class="text-lg font-black text-black">수정할 옷 선택</h3>
+        <button onclick="closeEditSelectModal()" class="w-8 h-8 rounded-full bg-neutral-100 text-black flex items-center justify-center font-bold"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="editSelectItemsList" class="space-y-2.5"></div>
+      <button onclick="closeEditSelectModal()" class="w-full py-3.5 rounded-2xl bg-neutral-200 text-black font-black text-sm mt-2">닫기</button>
+    </div>
+  </div>
+
+  <!-- 옷 수정 모달 -->
+  <div id="editClothModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 border-2 border-black shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-1 border-b border-neutral-200">
+        <h3 class="text-lg font-black text-black">옷 정보 수정</h3>
+        <button onclick="closeEditClothModal()" class="w-8 h-8 rounded-full bg-neutral-100 text-black flex items-center justify-center font-bold"><i class="ph ph-x"></i></button>
+      </div>
+      <input type="hidden" id="editClothId" value="" />
+      <div>
+        <label class="text-sm font-black text-black block mb-1">옷 이름</label>
+        <input type="text" id="editClothName" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-black text-black focus:outline-none" />
+      </div>
+      <div>
+        <label class="text-sm font-black text-black block mb-1.5">착용 계절</label>
+        <div class="grid grid-cols-2 gap-2 text-xs font-black">
+          <button type="button" onclick="selectEditSeason(this, '봄 · 가을 (간절기)')" class="edit-season-btn py-3 px-2 rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950" data-season="봄 · 가을 (간절기)">🍂 봄 · 가을</button>
+          <button type="button" onclick="selectEditSeason(this, '여름 (무더위/장마)')" class="edit-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700" data-season="여름 (무더위/장마)">☀️ 여름</button>
+          <button type="button" onclick="selectEditSeason(this, '겨울 (한파/보온)')" class="edit-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700" data-season="겨울 (한파/보온)">❄️ 겨울</button>
+          <button type="button" onclick="selectEditSeason(this, '사계절 (올시즌)')" class="edit-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700" data-season="사계절 (올시즌)">🌿 사계절</button>
+        </div>
+        <input type="hidden" id="editClothSeason" value="봄 · 가을 (간절기)" />
+      </div>
+      <div>
+        <label class="text-sm font-black text-black block mb-1">옷감 및 재질 특징</label>
+        <textarea id="editClothMaterial" rows="3" class="w-full bg-neutral-100 border border-neutral-300 rounded-2xl p-3 text-sm font-bold text-black focus:outline-none"></textarea>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="deleteCurrentCloth()" class="px-3.5 py-3.5 bg-rose-50 border-2 border-rose-300 text-rose-700 rounded-2xl text-xs font-black"><i class="ph ph-trash text-base"></i></button>
+        <button onclick="closeEditClothModal()" class="flex-1 py-3.5 bg-neutral-200 rounded-2xl text-sm font-black text-neutral-800">취소</button>
+        <button onclick="saveEditedCloth()" class="flex-1 py-3.5 bg-amber-500 rounded-2xl text-sm font-black text-black shadow-md">수정 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentScreen = 'home';
+    let currentTheme = 'musinsa';
+    let userId = '패션리더123';
+    let selectedGender = '남성';
+    let ttsSpeed = 1.0;
+
+    let warningCount = 0;
+    let isBannedToday = false;
+
+    // 🤬 비속어 사전
+    const generalProfanityList = [
+      '씨발', '시발', '씨바', '씨팔', '씨빨', '씨볼', '개새끼', '개새', '개새키', '개색기', '개자식', '개씹', '개좆', '개같', '개같은',
+      '병신', '븅신', 'ㅄ', '지랄', '좆', '좆같', '닥쳐', '꺼져', '또라이', '똘추', '찐따',
+      '미친', '미친놈', '미친년', '창녀', '창남', '뒈져', '뒤져', '처먹', '등신', '바보멍청이', '꼴통', '띨빵', '아가리', '틀딱', '벌레',
+      'ㅅㅂ', 'ㅆㅂ', 'ㅂㅅ', 'ㅈㄹ', 'ㅈㄴ', 'ㄱㅅㄲ', 'ㄲ져', 'ㄷ쳐', 'ㅁ친', 'ㅃ숑',
+      '18', '18놈', '18년', '18새끼', '십팔놈', '십팔년', 'ㅅ1발', 'ㅅ!발', 'ㅂ1신', 'ㅈ1랄', 'ㅅㅂㄴㅇ', 'ㄷㅊ', 'ㅁㅊㄴ', '공습경보', 'shut up', 'ㅅㅂㅋㅋㅋ'
+    ];
+
+    // 🚨 즉시 차단 핵심 표현
+    const immediateBanPhrases = [
+      '내눈버렸네', '이따구로입냐', '이딴옷당장버려라', '천쪼가리', '이딴', 
+      '내알고리즘의나타나지마', '이런옷을입냐', '이런옷을입냐?', '아직도이런옷을입냐', '아직도이런옷을입냐?', '이런옷을아직도입냐'
+    ];
+
+    // ⏰ 실시간 시계 업데이트 (초 제외, HH:MM 형식)
+    function updateLiveClockAndWeather() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+      
+      const timeEl = document.getElementById('currentTime');
+      if (timeEl) timeEl.innerText = timeStr;
+    }
+
+    // 🌡️ 실시간 온도 업데이트
+    function fetchLiveWeather() {
+      const now = new Date();
+      const hour = now.getHours();
+      
+      let currentTemp = 18;
+      if (hour >= 6 && hour < 12) currentTemp = 15 + (hour - 6);
+      else if (hour >= 12 && hour < 18) currentTemp = 21 - (hour - 12) * 0.5;
+      else currentTemp = 16;
+
+      const tempEl = document.getElementById('homeTempLabel');
+      const descEl = document.getElementById('homeWeatherDesc');
+      if (tempEl) tempEl.innerText = `${Math.round(currentTemp)}°C`;
+      if (descEl) descEl.innerText = `맑음 · 실시간 동기화 완료 (${hoursFormat(now)})`;
+    }
+
+    function hoursFormat(date) {
+      return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+
+    // 🔊 TTS 음성 낭독 함수
+    function speakText(text) {
+      const bannerEl = document.getElementById('ttsBannerText');
+      if (bannerEl) bannerEl.innerText = text;
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ko-KR';
+        utterance.rate = ttsSpeed;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakCurrentPage() {
+      let pageText = "";
+      if (currentScreen === 'home') {
+        pageText = "홈 화면입니다. 음성으로 시작하기와 4대 메뉴가 준비되어 있습니다.";
+      } else if (currentScreen === 'closet') {
+        pageText = `내 옷장 화면입니다. 현재 등록된 옷은 총 ${myClosetClothes.length}벌입니다.`;
+      } else if (currentScreen === 'outfit-concept') {
+        pageText = "AI 코디 1단계 상황 선택 화면입니다. 원하시는 코디 상황을 선택해 주세요.";
+      } else if (currentScreen === 'outfit-result') {
+        const outfit = outfitsData[currentOutfitIndex];
+        pageText = `추천 코디 화면입니다. ${outfit.title}. ${outfit.desc}.`;
+      } else if (currentScreen === 'community') {
+        pageText = "스타일 커뮤니티 피드 화면입니다. 새로운 코디를 확인하고 의견을 나눠보세요.";
+      } else if (currentScreen === 'settings') {
+        pageText = "설정 화면입니다. 글씨 크기와 테마, 음성 속도, 내 정보를 수정할 수 있습니다.";
+      }
+      speakText(pageText);
+    }
+
+    function setTtsSpeed(speed, btn) {
+      ttsSpeed = speed;
+      document.querySelectorAll('.tts-speed-btn').forEach(b => {
+        b.className = 'tts-speed-btn py-3.5 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-800 text-xs font-black text-center';
+      });
+      btn.className = 'tts-speed-btn py-3.5 rounded-2xl border-2 border-emerald-600 bg-emerald-600 text-white text-xs font-black text-center shadow-sm';
+      speakText(`음성 속도가 ${speed}배속으로 변경되었습니다.`);
+    }
+
+    function selectGender(btn, gender) {
+      selectedGender = gender;
+      document.querySelectorAll('.gender-btn').forEach(b => {
+        b.className = 'gender-btn py-3 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700';
+      });
+      btn.className = 'gender-btn py-3 rounded-2xl border-2 border-blue-600 bg-blue-600 text-white shadow-sm';
+    }
+
+    function saveUserInfoFromSettings() {
+      const nickname = document.getElementById('settingUserIdInput').value.trim();
+      const region = document.getElementById('settingRegionInput').value.trim();
+      
+      if (nickname) {
+        userId = nickname;
+        document.getElementById('displayUserId').innerText = userId;
+      }
+      if (region) {
+        document.getElementById('homeLocationLabel').innerText = region;
+      }
+      alert('내 정보가 성공적으로 저장되었습니다.');
+      speakText('내 정보 저장이 완료되었습니다.');
+    }
+
+    function saveAndGoHome() {
+      saveUserInfoFromSettings();
+      navigateTo('home');
+    }
+
+    let posts = [
+      {
+        id: 'post-1',
+        author: 'jieun_style',
+        content: '아침저녁 쌀쌀해서 트렌치코트 꺼내 입었어요 🍂',
+        likes: 128,
+        comments: [
+          { id: 'c1', author: '민우', text: '코트 톤이 정말 단정하고 멋져요!' }
+        ]
+      }
+    ];
+
+    let selectedConcept = '등교/출근';
+    const outfitsData = [
+      {
+        tag: '추천 1번 · 출근 베스트',
+        title: '단정한 가을 트렌치 룩',
+        desc: '베이지 싱글 트렌치코트 + 아이보리 셔츠 + 차콜 슬랙스',
+        shortItems: '베이지 트렌치 + 셔츠 + 슬랙스'
+      },
+      {
+        tag: '추천 2번 · 캐주얼',
+        title: '스트라이프 니트 룩',
+        desc: '네이비 스트라이프 니트 + 크림진 + 화이트 스니커즈',
+        shortItems: '네이비 니트 + 크림진 + 스니커즈'
+      },
+      {
+        tag: '추천 3번 · 모던 미니멀',
+        title: '심플 블랙 가디건 룩',
+        desc: '블랙 오버핏 가디건 + 화이트 티셔츠 + 무지 슬랙스',
+        shortItems: '블랙 가디건 + 티셔츠 + 슬랙스'
+      }
+    ];
+    let currentOutfitIndex = 0;
+
+    const availableThemes = ['musinsa', 'mint', 'pink', 'sky', 'purple', 'contrast'];
+    const themeDisplayNames = {
+      'musinsa': '심플 화이트', 'mint': '프레시 민트', 'pink': '러블리 핑크',
+      'sky': '스카이 블루', 'purple': '트렌디 퍼플', 'contrast': '고대비 다크'
+    };
+
+    function checkProfanityAndSanction(text) {
+      const sanitizedText = text.replace(/[\s~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '');
+      const hasImmediatePhrase = immediateBanPhrases.some((phrase) => sanitizedText.includes(phrase));
+      const matchedGeneral = generalProfanityList.filter((word) => sanitizedText.includes(word));
+
+      if (!hasImmediatePhrase && matchedGeneral.length === 0) {
+        return false;
+      }
+
+      const penaltyScore = hasImmediatePhrase ? 1.5 : 1.0;
+      warningCount = Number((warningCount + penaltyScore).toFixed(1));
+
+      // 🚨 경고 점수 UI 업데이트 반영
+      document.getElementById('warningStatusLabel').innerText = `클린 소통방 (경고 누적: ${warningCount} / 3점)`;
+
+      if (warningCount >= 3) {
+        isBannedToday = true;
+        document.getElementById('banStatusTag').innerText = '⚠️ 24시간 이용 제한';
+        document.getElementById('banStatusTag').className = 'text-xs font-black text-rose-600';
+        alert('부적절한 표현 사용으로 누적 경고 3점이 달성되어 24시간 동안 글쓰기 및 댓글 작성이 금지됩니다.');
+      } else {
+        alert(`부적절한 표현이 감지되어 등록이 차단되었습니다.\n(누적 경고 점수: ${warningCount} / 3점)`);
+      }
+      return true;
+    }
+
+    function navigateTo(screenId) {
+      ['home', 'closet', 'outfit-concept', 'outfit-result', 'community', 'settings'].forEach(id => {
+        const el = document.getElementById(`screen-${id}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      ['home', 'closet', 'outfit', 'community', 'settings'].forEach(navKey => {
+        const navEl = document.getElementById(`nav-${navKey}`);
+        if (navEl) {
+          navEl.classList.remove('text-black');
+          navEl.classList.add('text-neutral-400');
+        }
+      });
+
+      const target = document.getElementById(`screen-${screenId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        currentScreen = screenId;
+      }
+
+      let activeTabKey = screenId;
+      if (screenId === 'outfit-concept' || screenId === 'outfit-result') activeTabKey = 'outfit';
+      const activeNav = document.getElementById(`nav-${activeTabKey}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-neutral-400');
+        activeNav.classList.add('text-black');
+      }
+
+      if (screenId === 'closet') renderClosetList();
+      if (screenId === 'community') renderCommunityFeed();
+
+      speakCurrentPage();
+    }
+
+    let myClosetClothes = [
+      {
+        id: 'cloth-1',
+        name: '베이지 싱글 트렌치코트',
+        category: '아우터',
+        season: '봄 · 가을 (간절기)',
+        material: '고밀도 방수 코튼 개버딘 100%'
+      }
+    ];
+
+    function renderClosetList() {
+      const container = document.getElementById('closetItemsContainer');
+      const countBadge = document.getElementById('closetCountBadge');
+      if (countBadge) countBadge.innerText = `${myClosetClothes.length}벌`;
+      if (!container) return;
+
+      container.innerHTML = myClosetClothes.map((cloth) => `
+        <article class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-3 bg-white shadow-sm">
+          <div class="flex items-start gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <i class="ph ph-t-shirt text-2xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <span class="px-2.5 py-0.5 rounded-full bg-neutral-100 border text-neutral-800 text-xs font-black">${cloth.category}</span>
+              <h4 class="text-lg font-black text-black truncate mt-1">${cloth.name}</h4>
+            </div>
+          </div>
+          <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200">
+            <span class="text-xs font-black text-amber-900 block">입는 계절</span>
+            <p class="text-sm font-black text-amber-950">${cloth.season}</p>
+          </div>
+          <div class="p-3 rounded-2xl bg-neutral-100 border border-neutral-200">
+            <span class="text-xs font-black text-neutral-700 block">옷감 및 재질</span>
+            <p class="text-sm font-black text-neutral-900">${cloth.material}</p>
+          </div>
+          <button onclick="openEditClothModal('${cloth.id}')" class="w-full py-3 rounded-2xl bg-amber-400 text-black font-black text-sm shadow">
+            정보 수정하기
+          </button>
+        </article>
+      `).join('');
+    }
+
+    function renderCommunityFeed() {
+      const container = document.getElementById('communityFeedContainer');
+      if (!container) return;
+
+      container.innerHTML = posts.map(post => `
+        <article class="card-box border-2 border-neutral-300 rounded-3xl p-5 space-y-3.5 bg-white shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-base text-blue-600">${post.author}</span>
+            <span class="text-xs font-bold text-neutral-400">게시물</span>
+          </div>
+
+          <p class="text-sm font-bold text-black leading-relaxed">${post.content}</p>
+
+          <div class="space-y-2 pt-1" id="comments-${post.id}">
+            ${post.comments.map(c => `
+              <div class="p-3 rounded-2xl bg-neutral-100 text-sm font-bold">
+                <span class="font-black text-black">${c.author}:</span> ${c.text}
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <input type="text" id="input-${post.id}" placeholder="댓글을 입력하세요..." class="flex-1 bg-neutral-100 border border-neutral-300 rounded-2xl px-4 py-3 text-sm font-bold focus:outline-none" />
+            <button onclick="addCommentToPost('${post.id}')" class="px-4 py-3 rounded-2xl bg-emerald-600 text-white text-sm font-black shadow">
+              등록
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function addCommentToPost(postId) {
+      if (isBannedToday) {
+        return alert('부적절한 표현 사용 제재로 24시간 동안 댓글 작성이 제한됩니다.');
+      }
+
+      const input = document.getElementById(`input-${postId}`);
+      if (!input || !input.value.trim()) return;
+
+      const text = input.value.trim();
+      if (checkProfanityAndSanction(text)) {
+        input.value = '';
+        return;
+      }
+
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        post.comments.push({ id: `c-${Date.now()}`, author: userId, text: text });
+        renderCommunityFeed();
+        input.value = '';
+      }
+    }
+
+    function openPostModal() {
+      if (isBannedToday) {
+        return alert('부적절한 표현 사용 제재로 24시간 동안 게시물 작성이 제한됩니다.');
+      }
+      document.getElementById('newPostModal').classList.remove('hidden');
+    }
+    function closePostModal() { document.getElementById('newPostModal').classList.add('hidden'); }
+    function simulateSelectPhoto() { document.getElementById('newPostPhotoLabel').innerText = '✅ 착장 사진 첨부 완료'; }
+
+    function submitNewPost() {
+      if (isBannedToday) {
+        return alert('게시물 작성이 금지되었습니다.');
+      }
+
+      const text = document.getElementById('newPostText').value.trim();
+      if (!text) return alert('내용을 입력하세요.');
+
+      if (checkProfanityAndSanction(text)) {
+        document.getElementById('newPostText').value = '';
+        return;
+      }
+
+      posts.unshift({
+        id: `post-${Date.now()}`,
+        author: userId,
+        content: text,
+        likes: 0,
+        comments: []
+      });
+
+      document.getElementById('newPostText').value = '';
+      closePostModal();
+      renderCommunityFeed();
+      alert('피드에 성공적으로 등록되었습니다!');
+    }
+
+    function openRegisterClothModal() {
+      document.getElementById('regClothName').value = '';
+      document.getElementById('regClothMaterial').value = '';
+      document.getElementById('registerClothModal').classList.remove('hidden');
+    }
+    function closeRegisterClothModal() { document.getElementById('registerClothModal').classList.add('hidden'); }
+    function simulateRegisterPhoto() { document.getElementById('regPhotoLabel').innerText = '✅ 옷 사진 등록 완료'; }
+
+    function selectRegSeason(btn, season) {
+      document.getElementById('regClothSeason').value = season;
+      document.querySelectorAll('.reg-season-btn').forEach(b => {
+        b.className = 'reg-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700';
+      });
+      btn.className = 'reg-season-btn py-3 px-2 rounded-2xl border-2 border-amber-500 bg-amber-500 text-black';
+    }
+
+    function saveNewCloth() {
+      const name = document.getElementById('regClothName').value.trim();
+      const season = document.getElementById('regClothSeason').value;
+      const materialText = document.getElementById('regClothMaterial').value.trim();
+
+      if (!name) return alert('옷 이름을 입력해 주세요.');
+
+      myClosetClothes.unshift({
+        id: `cloth-${Date.now()}`,
+        name: name,
+        category: '의류',
+        season: season,
+        material: materialText || '면 혼방 소재'
+      });
+      renderClosetList();
+      closeRegisterClothModal();
+      alert('옷장에 등록되었습니다.');
+    }
+
+    function openEditSelectModal() {
+      const container = document.getElementById('editSelectItemsList');
+      if (!container) return;
+      container.innerHTML = myClosetClothes.map(cloth => `
+        <button onclick="closeEditSelectModal(); openEditClothModal('${cloth.id}');" class="w-full p-4 rounded-2xl border-2 bg-amber-50 border-amber-300 text-amber-950 font-black text-left flex items-center justify-between">
+          <span>${cloth.name}</span>
+          <i class="ph ph-caret-right"></i>
+        </button>
+      `).join('');
+      document.getElementById('editSelectModal').classList.remove('hidden');
+    }
+    function closeEditSelectModal() { document.getElementById('editSelectModal').classList.add('hidden'); }
+
+    function openEditClothModal(id) {
+      const cloth = myClosetClothes.find(c => c.id === id);
+      if (!cloth) return;
+      document.getElementById('editClothId').value = cloth.id;
+      document.getElementById('editClothName').value = cloth.name;
+      document.getElementById('editClothSeason').value = cloth.season;
+      document.getElementById('editClothMaterial').value = cloth.material;
+      document.getElementById('editClothModal').classList.remove('hidden');
+    }
+    function closeEditClothModal() { document.getElementById('editClothModal').classList.add('hidden'); }
+
+    function selectEditSeason(btn, season) {
+      document.getElementById('editClothSeason').value = season;
+      document.querySelectorAll('.edit-season-btn').forEach(b => {
+        b.className = 'edit-season-btn py-3 px-2 rounded-2xl border-2 border-neutral-300 bg-neutral-50 text-neutral-700';
+      });
+      btn.className = 'edit-season-btn py-3 px-2 rounded-2xl border-2 border-amber-500 bg-amber-500 text-black';
+    }
+
+    function saveEditedCloth() {
+      const id = document.getElementById('editClothId').value;
+      const cloth = myClosetClothes.find(c => c.id === id);
+      if (!cloth) return;
+
+      cloth.name = document.getElementById('editClothName').value.trim();
+      cloth.season = document.getElementById('editClothSeason').value;
+      cloth.material = document.getElementById('editClothMaterial').value.trim();
+
+      renderClosetList();
+      closeEditClothModal();
+      alert('수정 저장되었습니다.');
+    }
+
+    function deleteCurrentCloth() {
+      const id = document.getElementById('editClothId').value;
+      if (confirm('이 옷을 삭제하시겠습니까?')) {
+        myClosetClothes = myClosetClothes.filter(c => c.id !== id);
+        renderClosetList();
+        closeEditClothModal();
+      }
+    }
+
+    function selectSituation(btn, name, color) {
+      selectedConcept = name;
+      document.querySelectorAll('.situation-btn').forEach(b => {
+        b.className = 'situation-btn h-32 p-4 rounded-3xl border-2 border-neutral-300 bg-neutral-50 text-neutral-900 font-black text-left flex flex-col justify-between shadow-sm';
+      });
+      btn.className = 'situation-btn h-32 p-4 rounded-3xl border-2 border-blue-600 bg-blue-600 text-white font-black text-left flex flex-col justify-between shadow-md ring-4 ring-blue-200';
+    }
+
+    function proceedToOutfitResult() {
+      currentOutfitIndex = 0;
+      document.getElementById('currentConceptBadge').innerText = `${selectedConcept} 코디 (실시간 반영됨)`;
+      updateOutfitSlideDisplay();
+      navigateTo('outfit-result');
+    }
+
+    function updateOutfitSlideDisplay() {
+      const data = outfitsData[currentOutfitIndex];
+      document.getElementById('outfitIndexLabel').innerText = `${currentOutfitIndex + 1} / 3`;
+      document.getElementById('slideTag').innerText = data.tag;
+      document.getElementById('slideTitle').innerText = data.title;
+      document.getElementById('slideDesc').innerText = `조합: ${data.desc}`;
+      document.getElementById('slideShortItems').innerText = data.shortItems;
+    }
+
+    function prevOutfitSlide() {
+      currentOutfitIndex = (currentOutfitIndex > 0) ? currentOutfitIndex - 1 : outfitsData.length - 1;
+      updateOutfitSlideDisplay();
+    }
+    function nextOutfitSlide() {
+      currentOutfitIndex = (currentOutfitIndex < outfitsData.length - 1) ? currentOutfitIndex + 1 : 0;
+      updateOutfitSlideDisplay();
+    }
+    function confirmSelectedOutfit() { alert('코디가 확정되었습니다!'); }
+
+    function setFontSize(size, btn) {
+      const body = document.getElementById('appBody');
+      body.classList.remove('font-size-md', 'font-size-lg', 'font-size-xl');
+      body.classList.add(`font-size-${size}`);
+    }
+
+    function applyThemeChoice(themeName) {
+      currentTheme = themeName;
+      const body = document.getElementById('appBody');
+      availableThemes.forEach(t => body.classList.remove(`theme-${t}`));
+      body.classList.add(`theme-${themeName}`);
+      document.getElementById('quickThemeLabel').innerText = themeDisplayNames[themeName];
+    }
+
+    function cycleNextTheme() {
+      const nextIndex = (availableThemes.indexOf(currentTheme) + 1) % availableThemes.length;
+      applyThemeChoice(availableThemes[nextIndex]);
+    }
+
+    // 🔄 실시간 시계(초 제외) 및 날씨 자동 갱신
+    setInterval(updateLiveClockAndWeather, 1000);
+    setInterval(fetchLiveWeather, 600000);
+
+    updateLiveClockAndWeather();
+    fetchLiveWeather();
+    renderClosetList();
+    renderCommunityFeed();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        speakCurrentPage();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
